@@ -1,0 +1,45 @@
+// Fund Split
+// 1) Deploy Fund Split
+// 2) Set Ash Address
+// 3) Set Split
+
+// Anastasis Act 1
+// 1) Deploy Anastasis Act 1 contract
+// 2) Set URI (urisNumber = total URIs; uri= Arweave link)
+// 3) Deploy the auction contract
+// 4) Set Auction contract as AnastasisAct1 contract admin
+// 5) Set FundSplit as recipient for the AnastasisAct1Mint contract
+// 6) Setup the auction:
+            contract to mint: AnastasisAct1,  
+            startingPrice: 0.005, 
+            reservePrice: TBD
+            minBid: TBD,
+            auctionBeneficiary: TBD)
+
+
+// Anastasis Act 2
+// 1) Deploy Anastasis Act 2 contract
+// 2) Set URI (urisNumber = total URIs; uri= Arweave link)
+// 3) Deploy the mint contract
+// 4) Set Mint contract as AnastasisAct2 contract admin
+// 5) Set FundSplit as recipient for the AnastasisAct2Mint contract
+// 6) Check AnastasisAct2address in AnastasisAct2Mint
+// 7) Check FOMOverse address
+// 8) Check Ash address
+// 9) Open the drop
+
+
+// Anastasis Act 3
+// 1) Deploy Anastasis Act 3 contract
+// 2) Set the URI
+// 3) Deploy the mint contract
+// 4) Set mint contract as admin for Anastasis act 3
+// 5) Set AnastasisAct3 Address in AnastasisAct3Mint contract
+// 6) Set FundSplit as recipient for the AnastasisAct3Mint contract
+// 7) Set Fomoverse address
+// 8) Set Ash address
+// 9) Set Anastasis act 2 address
+// 10) Open the drop for Fomo holders
+// 11) Open the drop for ash holders
+// 12) Open the drop for AL list
+// 13) Open the drop to the public

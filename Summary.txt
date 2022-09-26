@@ -1,0 +1,39 @@
+Anastasis has 3 acts:
+
+1) A 1/1 NFT - ERC 721;
+Price:      Auction; starts at 0.005
+Deployer:   Created by the F-collective wallet (0x26d2Fbe70830f0A98DE449f6DEC06a64a5C5Ff4B)
+Visual:     Changes every 8 hours (15 Visuals total - TBC)
+        Question =>  Confirm number of visuals (i.e.: number of artists)
+Edition #:  1/1
+Minters:    Anyone
+Time: Begins 10/3 ends 10/4 
+
+2) An Open Edition - ERC 721
+Price:      Can accept ETH and ASH 
+            0.02ETH per mint // 0.015ETH for Holders of Fomoverse & whomever has more than 25ASH
+            20 ASH // No ASH discound for Holders of Fomverse & 25 ASH
+            All bidders from the 1/1 gets a free mint
+Deployer:   Created by the F-collective wallet (0x26d2Fbe70830f0A98DE449f6DEC06a64a5C5Ff4B)
+Visual:     Multiple visuals with random chances of getting one
+            1 visual per artist (15 total)
+            Odds for each piece to be provided by the artist
+Edition #:  As many as minted (max 10 per transaction and max 30 total)
+Minters:    Anyone
+Time: begins on 10/4 ends 10/6.
+OE will be burnable for a rare NFT
+
+3) A Limited Edition - ERC1155
+Price:      0.03ETH
+Deployer:   Created by the F-collective wallet (0x26d2Fbe70830f0A98DE449f6DEC06a64a5C5Ff4B)
+Visual:     X visuals per artists with odds of getting one over the other
+Edition #:  33 per artist (15*33: 495)
+Minters:    Holders of Fomoverse; Then holders ofOE & 25 ash; Then selected by the artist; Then public; One per wallet for private sale + one per wallet in public sale (max 2 tokens for a wallet)
+Time: Begins a few hours later on 10/6 ends 10/7
+
+In addition: 1 contract to split the funds according to the follwing:
+15% for the "wallet";
+10% for the "dev" (min of 1 ETH);
+75% to split equally amongst the artists & marketing (15 artists ~ 5%);
+
+

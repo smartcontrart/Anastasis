@@ -1,0 +1,274 @@
+html, body{
+  /* text-align: center; */
+  min-height: 100vh;
+  /* height: auto; */
+  /* width: 100vw; */
+  background-color: black;
+  color: #f6f6f6;
+  /* display: flex; */
+
+  /* justify-content: center; */
+  /* align-items: center; */
+  font-family: "Titillium Web", sans-serif;
+  /* font-weight: 400; */
+  /* letter-spacing: 0.05rem; */
+}
+
+.App {
+  text-align: center;
+  min-height: 100vh;
+  height: 100%;
+  /* background-color: black; */
+  color: #f6f6f6;
+  /* display: flex; */
+  justify-content: center;
+  align-items: center;
+  font-family: "Rubik", sans-serif;
+  font-weight: 400;
+  letter-spacing: 0.05rem;
+}
+
+.navbar{
+  font-family: "Titillium Web", sans-serif;
+  font-weight: 400;
+  letter-spacing: 0.05rem;
+}
+
+ .title{
+  font-size: 4vw;
+  font-weight: 500;
+  margin-bottom: 0vh;
+ }
+ 
+ .subtitle{
+  font-size: 1.2vw;
+  font-weight: 500;
+ }
+
+ .white_border{
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    border: 2px solid #ffffff;
+    margin: 5px;
+  }
+
+  .link{
+    color: white !important;
+    /* text-decoration: underline !important; */
+    /* text-align: left !important; */
+  }
+
+ .choice{
+  font-size: 2.5vw;
+  /* font-weight: bold; */
+ }
+
+ .home_container{
+  width: 65vw !important;
+ }
+
+ .home_title{
+  font-size: 2vw;
+ }
+
+ #black{
+  background-color: black !important;
+ }
+
+.figure_image{
+  margin-bottom: 0;
+}
+
+ .background{
+  /* min-height: 70vh; */
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  height: auto;
+  min-height: 100vh;
+  /* height:; */
+ }
+
+ #audio_choice{
+  font-size: 1.2vw;
+}
+
+.carousel{
+  max-height: 55vh;
+  max-width: 55vw;
+  margin: auto;
+}
+
+.text-left{
+  text-align: left;
+}
+
+.about_graphic{
+  width: 100%;
+  max-width: 40vw;
+  margin-left: -10vw;
+}
+
+#App_row{
+  max-width: 100vw;
+  width: 100%;
+}
+
+#description_row{
+  margin-bottom: 50px;
+}
+
+#visual_row{
+  margin-bottom: 20px;
+}
+
+#audio_row{
+  margin-bottom: 20px;
+}
+
+#button_row{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 5vh 0vh 5vh 0vh;
+}
+
+#mint_button{
+  color: black;
+  background-color: white !important;
+  border-color: black;
+  width: 12em;
+  border-radius: 0 !important;
+}
+
+#UI_row{
+  display: flex;
+  justify-content: center;
+}
+
+#deposit_button{
+  color: black;
+  background-color: white !important;
+  border-color: black;
+  width: 12em;
+  border-radius: 0 !important;
+}
+
+#deposit_row{
+  display: flex;
+  justify-content: center;
+  padding: 0;
+  width: 100%;
+}
+
+#deposit_col{
+  display: flex;
+  width: 12em;
+  padding: 0;
+}
+
+#deposit_form{
+  padding: 0;
+  width: 12em;
+  margin: 0;
+  /* border-radius: 0 !important; */
+}
+
+#withdraw_button{
+  color: white;
+  background-color: black !important;
+  border-color: white;
+  width: 12em;
+  border-radius: 0 !important;
+}
+
+#withdrawal_row{
+  display: flex;
+  justify-content: center;
+  padding: 0;
+  width: 100%;
+}
+
+#withdrawal_col{
+  display: flex;
+  width: 12em;
+  padding: 0;
+}
+
+#withdrawal_form{
+  padding: 0;
+  width: 12em;
+  margin: 0;
+}
+
+#connect_button{
+  background-color: black !important;
+  width: 12em;
+  border: 2px solid #FFFFFF !important;
+  border-radius: 0 !important;
+}
+
+#wl_badge{
+  width: 16em !important;
+  border-radius: 0 !important;
+  font-weight: 400 !important;
+}
+
+#claim_badge{
+  width: 16em !important;
+  border-radius: 0 !important;
+  font-weight: 400 !important
+}
+
+#connexion_status{
+  margin-top: 5vh;
+  border-radius: 0 !important;
+}
+
+#web3_alert{
+  border-radius: 0 !important;
+  width: 12em;
+  color: white;
+  background-color: black !important;
+  border: 2px solid #FFFFFF !important;
+}
+
+.etherscan_link{
+  color: rgb(119, 119, 119);
+}
+
+#connexion_info{
+  color: rgb(119, 119, 119);
+  font-size: 0.7em;
+  font-weight: lighter;
+}
+
+@media screen and (max-width: 650px) {
+
+  .home_container{
+    width: 100%;
+    font-size: 4vw;
+  }
+
+  .carousel{
+    max-height: 75vh;
+    max-width: 75vw;
+    margin: auto;
+  }
+
+  .text_left{
+    text-align: center;
+  }
+
+  .about_graphic{
+    max-width: 80vw;
+    /* margin-left: -10vw; */
+  }
+
+  .home_title{
+    font-size: 1.5rem;
+    /* white-space: normal; */
+  }
+
+} 
