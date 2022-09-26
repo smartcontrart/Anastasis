@@ -4,7 +4,7 @@ import { AccountInfoContext } from "../Context/AccountInfo";
 
 import '../App.css'
 
-function Mint() {
+function Act2() {
     let accountInfo = useContext(AccountInfoContext)
     const [alert, setAlert] = useState({active: false, content: null, variant: null})
 
@@ -106,6 +106,6 @@ function Mint() {
      );
 }
 
-export default Mint;
+export default Act2;
 
 

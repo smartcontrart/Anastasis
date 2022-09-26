@@ -1,11 +1,8 @@
 require('dotenv').config()
 const fs = require('fs');
-const AL = require("./ContractData/WL/WL.json")
+const AL = require("./ContractData/AL/ALAct2.json")
 const ALaddresses = AL.addresses;
-// const URIS = require("./ContractData/URIs/URIs.json")
-// var contract = artifacts.require("Duality");
-var contract_address = process.env.DEV_CONTRACT_ADDRESS;
-// var contract_address = process.env.PROD_CONTRACT_ADDRESS;
+var contract_address = process.env.DEV_CONTRACT_ACT2_ADDRESS;
 const signer = web3.eth.accounts.wallet.add(process.env.DEV_WALLET_1_PRIVKEY);
 console.log(web3)
 
@@ -14,7 +11,7 @@ module.exports = async function() {
     for(i=0; i < ALaddresses.length ;i ++){
         web3.utils.toChecksumAddress(ALaddresses[i])
         web3.utils.toChecksumAddress(signer.address)
-        let signedMessage = await web3.eth.accounts.sign(web3.utils.soliditySha3(ALaddresses[i], contract_address, true, true), signer.privateKey)
+        let signedMessage = await web3.eth.accounts.sign(web3.utils.soliditySha3(ALaddresses[i], contract_address, true, false), signer.privateKey)
         signedAL.push({[ALaddresses[i]]: signedMessage})
     }
     let data = JSON.stringify(signedAL)

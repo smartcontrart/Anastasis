@@ -5,7 +5,14 @@ import WalletConnectProvider from "@walletconnect/web3-provider";
 import CoinbaseWalletSDK from '@coinbase/wallet-sdk';
 import { Button } from "react-bootstrap";
 import { AccountInfoContext } from '../Context/AccountInfo'
-import AIGirls  from "../contracts/AIGirls.json";
+import ALAct2 from "../AL/signedListAct2.json"
+import ALAct3 from "../AL/signedListAct3.json"
+import Act1  from "../contracts/Anastasis_Act1.json";
+import Act2  from "../contracts/Anastasis_Act2.json";
+import Act3  from "../contracts/Anastasis_Act3.json";
+import Act1Mint  from "../contracts/AnastasisAuction.json";
+import Act2Mint  from "../contracts/AnastasisOpenEdition.json";
+import Act3Mint  from "../contracts/AnastasisLimitedEdition.json";
 
 class Connect extends Component {
   
@@ -13,38 +20,6 @@ class Connect extends Component {
   
   componentDidMount = async () => {
 
-    // const providerOptions = {
-    //   walletconnect: {
-    //     package: WalletConnectProvider, // required
-    //     options: {
-    //       infuraId: process.env.REACT_APP_INFURA_PROJECT_ID1 // required
-    //     }
-    //   },
-    //   coinbasewallet: {
-    //     package: CoinbaseWalletSDK, // Required
-    //     options: {
-    //       appName: "BirdBlotter", // Required
-    //       infuraId: process.env.REACT_APP_INFURA_PROJECT_ID1, // Required
-    //       rpc: "", // Optional if `infuraId` is provided; otherwise it's required
-    //       chainId: process.env.REACT_APP_MAINNET_NETWORK, // Optional. It defaults to 1 if not provided
-    //       darkMode: false // Optional. Use dark theme, defaults to false
-    //     }
-    //   }
-    // };
-
-    // this.web3Modal = new Web3Modal({
-    //   // network: "mainnet", // optional
-    //   // cacheProvider: true, // optional
-    //   providerOptions // required
-    // });
-
-    
-    // if (window.ethereum) {
-    //   console.log('here')
-    //   // this.web3 = new Web3(window.ethereum);
-    //   // this.web3 = new Web3(this.provider)
-    //   console.log(this.web3)
-    // } else 
     if (window.ethereum) {
       this.web3 = new Web3(window.ethereum);
     } else if (window.web3) {
@@ -60,20 +35,48 @@ class Connect extends Component {
 
   async getContractsInstances(){
     this.networkId = await this.web3.eth.net.getId();
-    this.deployedNetwork = AIGirls.networks[this.networkId];
-    this.AIGirlsInstance = new this.web3.eth.Contract(
-      AIGirls.abi,
-      parseInt(process.env.REACT_APP_MAINNET_NETWORK) && process.env.REACT_APP_MAINNET_CONTRACT_ADDRESS
+    // this.deployedNetwork = AIGirls.networks[this.networkId];
+    this.Act1 = new this.web3.eth.Contract(
+      Act1.abi,
+      parseInt(process.env.REACT_APP_GOERLI_NETWORK) && process.env.REACT_APP_GOERLI_CONTRACT_ADDRESS
     )
-    this.context.updateAccountInfo({AIGirlsInstance: this.AIGirlsInstance})
-    this.getMintInfo();
+    this.Act1Mint = new this.web3.eth.Contract(
+      Act1Mint.abi,
+      parseInt(process.env.REACT_APP_GOERLI_NETWORK) && process.env.REACT_APP_GOERLI_CONTRACT_ADDRESS
+    )
+    this.Act2 = new this.web3.eth.Contract(
+      Act2.abi,
+      parseInt(process.env.REACT_APP_GOERLI_NETWORK) && process.env.REACT_APP_GOERLI_CONTRACT_ADDRESS
+    )
+    this.Act2Mint = new this.web3.eth.Contract(
+      Act2Mint.abi,
+      parseInt(process.env.REACT_APP_GOERLI_NETWORK) && process.env.REACT_APP_GOERLI_CONTRACT_ADDRESS
+    )
+    this.Act3 = new this.web3.eth.Contract(
+      Act3.abi,
+      parseInt(process.env.REACT_APP_GOERLI_NETWORK) && process.env.REACT_APP_GOERLI_CONTRACT_ADDRESS
+    )
+    this.Act3Mint = new this.web3.eth.Contract(
+      Act3Mint.abi,
+      parseInt(process.env.REACT_APP_GOERLI_NETWORK) && process.env.REACT_APP_GOERLI_CONTRACT_ADDRESS
+    )
+    
+    this.context.updateAccountInfo({Act1Instance: this.Act1Instance})
+    this.context.updateAccountInfo({Act1MintInstance: this.Act1MintInstance})
+    this.context.updateAccountInfo({Act2Instance: this.Act2Instance})
+    this.context.updateAccountInfo({Act2MintInstance: this.Act2MintInstance})
+    this.context.updateAccountInfo({Act3Instance: this.Act3Instance})
+    this.context.updateAccountInfo({Act3MintInstance: this.Act3MintInstance})
+    this.getAct1Info();
+    this.getAct2Info();
+    this.getAct3Info();
   }
 
   async setAccount(){
     if(this.context.networkId !== null){
       let accounts = await this.web3.eth.getAccounts();
       await this.context.updateAccountInfo({account: accounts[0]});
-      if(this.context.account) this.getAccountsData()
+      if(this.context.account) this.getAccountsData(accounts[0])
     }else{
       this.resetAccountData();
     }
@@ -92,18 +95,43 @@ class Connect extends Component {
     }
   }
 
-  async getAccountsData(){
-    if(this.context.networkId === parseInt(process.env.REACT_APP_MAINNET_NETWORK) ){
+  async getAccountsData(account){
+    if(this.context.networkId === parseInt(process.env.REACT_APP_GOERLI_NETWORK) ){
       this.context.updateAccountInfo({walletETHBalance: await this.web3.eth.getBalance(this.context.account)});
-      this.context.updateAccountInfo({dropOpened: await this.AIGirlsInstance.methods._mintOpened().call()})
-      this.context.updateAccountInfo({nameChangeActivated: await this.AIGirlsInstance.methods._nameChangeActivated().call()})
+      let signedMessageAct2 = await this.findSignedMessageAct2(account);
+      this.context.updateAccountInfo({signedMessageAct2: signedMessageAct2})
+      let signedMessageAct3 = await this.findSignedMessageAct3(account);
+      this.context.updateAccountInfo({signedMessageAc3: signedMessageAct3})
     }
   }
 
-  async getMintInfo(){
-    if(this.context.networkId === parseInt(process.env.REACT_APP_MAINNET_NETWORK) ){
-      this.context.updateAccountInfo({mintPrice: parseFloat(await this.AIGirlsInstance.methods._mintPrice().call())})
-      this.context.updateAccountInfo({nameChangePrice: parseFloat(await this.AIGirlsInstance.methods._nameChangePrice().call())})
+  async getAct1Info(){
+    if(this.context.networkId === parseInt(process.env.REACT_APP_GOERLI_NETWORK) ){
+      this.context.updateAccountInfo({act1Opened: await this.Act1MintInstance.methods._isLive().call()})
+      this.context.updateAccountInfo({auctionStartingPrice: await this.Act1MintInstance.methods._startingPrice().call()})
+      this.context.updateAccountInfo({auctionReservePrice: await this.Act1MintInstance.methods._reservePrice().call()})
+      this.context.updateAccountInfo({auctionMinBid: await this.Act1MintInstance.methods._minBid().call()})
+      this.context.updateAccountInfo({auctionCurrentTopBid: await this.Act1MintInstance.methods._currentTopBid().call()})
+      this.context.updateAccountInfo({auctionHighestBidder: await this.Act1MintInstance.methods._highestBidder().call()})
+    }
+  }
+
+  async getAct2Info(){
+    if(this.context.networkId === parseInt(process.env.REACT_APP_GOERLI_NETWORK) ){
+      this.context.updateAccountInfo({act2Opened: await this.Act2MintInstance.methods._mintOpened().call()})
+      this.context.updateAccountInfo({holderPrice: await this.Act2MintInstance.methods._holderPrice().call()})
+      this.context.updateAccountInfo({publicPrice: await this.Act2MintInstance.methods._publicPrice().call()})
+      this.context.updateAccountInfo({ashPrice: await this.Act2MintInstance.methods._ashPrice().call()})
+    }
+  }
+
+  async getAct3Info(){
+    if(this.context.networkId === parseInt(process.env.REACT_APP_GOERLI_NETWORK) ){
+      this.context.updateAccountInfo({FOMOMintOpened: await this.Act3MintInstance.methods._fomoMintOpened().call()})
+      this.context.updateAccountInfo({ashMintOpened: await this.Act3MintInstance.methods._ashMintOpened().call()})
+      this.context.updateAccountInfo({ALMintOpened: await this.Act3MintInstance.methods._ALMintOpened().call()})
+      this.context.updateAccountInfo({publicMintOpened: await this.Act3MintInstance.methods._publicMintOpened().call()})
+      this.context.updateAccountInfo({price: await this.Act3MintInstance.methods._publicMintOpened()._price()})
     }
   }
 
@@ -131,6 +159,28 @@ class Connect extends Component {
     }else return <Button variant="outline-light">Connected as {this.getAccountStr(this.context.account)}</Button>
   }
 
+  async findSignedMessageAct2(account){
+    let signedMessage = null
+    for(let i=0;i<ALAct2.length;i++){
+      let key = Object.keys(ALAct2[i])[0]
+      if(key.toLowerCase() === account.toLowerCase()){
+        signedMessage = ALAct2[i][key]
+      }
+    }
+    return signedMessage
+  }
+
+  async findSignedMessageAct3(account){
+    let signedMessage = null
+    for(let i=0;i<ALAct3.length;i++){
+      let key = Object.keys(ALAct3[i])[0]
+      if(key.toLowerCase() === account.toLowerCase()){
+        signedMessage = ALAct3[i][key]
+      }
+    }
+    return signedMessage
+  }
+
   render() {
     if(this.web3){
       window.ethereum.on('accountsChanged', async () => {
@@ -140,10 +190,7 @@ class Connect extends Component {
         await this.setNetwork()
         await this.setAccount();
       });
-      // window.ethereum.on('chainChanged', async () => {
-      //   await this.setNetwork()
-      //   await this.setAccount();
-      // });
+
     }
     return this.renderUserInterface()
   }
