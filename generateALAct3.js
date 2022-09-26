@@ -15,6 +15,6 @@ module.exports = async function() {
         signedAL.push({[ALaddresses[i]]: signedMessage})
     }
     let data = JSON.stringify(signedAL)
-    fs.writeFileSync('signedList.json', data);
+    fs.writeFileSync('signedListAct3.json', data);
 }
 
