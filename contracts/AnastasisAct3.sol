@@ -11,8 +11,7 @@ contract Anastasis_Act3 is ERC721, AdminControl {
     
     address payable  private _royalties_recipient;
     uint256 private _royaltyAmount; //in % 
-    uint256 public _uriNumber;
-    uint256 public _editionNumber = 1;
+    uint256 public _editionNumber = 33;
     uint256 public _tokenId = 1;
     uint256[] public _availableURIs;
     string public _uri;
@@ -21,7 +20,7 @@ contract Anastasis_Act3 is ERC721, AdminControl {
     mapping(uint256 => uint256) public _tokenURIs;
     
     constructor () ERC721("f-1 Anastasis - Act3", "f-1 AA3") {
-        _availableURIs = [1,2,3,4];
+        _availableURIs = [1,2,3,4,5];
         for(uint256 i = 0; i <= _availableURIs.length; i++){
             _stock[i] = _editionNumber;
         }
@@ -80,10 +79,8 @@ contract Anastasis_Act3 is ERC721, AdminControl {
     }
 
     function setURI(
-        uint256 uriNumber,
         string calldata updatedURI
     ) external adminRequired{
-        _uriNumber = uriNumber;
         _uri = updatedURI;
     }
 

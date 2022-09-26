@@ -78,8 +78,8 @@ contract("AnastasisAct3", accounts => {
   })
 
   it("... should allow to do admin stuff", async ()=>{
-    await assert.rejects( AnastasisAct3.setURI(15, 'test', {from: accounts[1]}), "Admin Could not set the AnastasisAct3Mint as an admin");
-    assert(await AnastasisAct3.setURI(15, 'blob'), "Admin Could not set the AnastasisAct3Mint as an admin");
+    await assert.rejects( AnastasisAct3.setURI('test', {from: accounts[1]}), "Admin Could not set the AnastasisAct3Mint as an admin");
+    assert(await AnastasisAct3.setURI('blob'), "Admin Could not set the AnastasisAct3Mint as an admin");
     assert(await AnastasisAct3.approveAdmin(AnastasisAct3MintAddress), "Could not set Admin up");
     assert(await AnastasisAct3Mint.setAnastasisAct3Address(AnastasisAct3Address) ,"Could not setup contract address");
     assert(await AnastasisAct3Mint.setFOMOAddress(FOMOverseAddress) ,"Could not setup contract address");
@@ -137,7 +137,14 @@ contract("AnastasisAct3", accounts => {
 
 
   it("... should prevent to mint more than 2 tokens for WL wallets", async ()=>{
-    
+
+    assert(await AnastasisAct3Mint.publicMint({from: fomoHolder, value: 0.03*10**18 }), "FOMO profile couldn't mint");
+    assert(await AnastasisAct3Mint.publicMint({from: ashOEHolder, value: 0.03*10**18 }),"Ash profile couldn't mint");
+    assert(await AnastasisAct3Mint.publicMint({from: selectedByArtist, value: 0.03*10**18 }),"AL profile couldn't mint");
+    await assert.rejects(AnastasisAct3Mint.publicMint({from: fomoHolder, value: 0.03*10**18 }));
+    await assert.rejects(AnastasisAct3Mint.publicMint({from: ashOEHolder, value: 0.03*10**18 }));
+    await assert.rejects(AnastasisAct3Mint.publicMint({from: selectedByArtist, value: 0.03*10**18 }));
+    await assert.rejects(AnastasisAct3Mint.publicMint({from: publicMinter, value: 0.03*10**18 }));
   })
 
   it("... should have max 33 tokens of each", async ()=>{
