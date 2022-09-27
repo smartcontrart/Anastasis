@@ -151,11 +151,11 @@ contract("AnastasisAct2", accounts => {
     let minter = accounts[4]
     let signature = AL[minter]
     assert(await AnastasisAct2Mint.getFreeMint(signature.v, signature.r, signature.s, {from: minter}) , "Couldn't get a free mint while being eligible");
-    await assert.rejects(AnastasisAct2Mint.getFreeMint({from: accounts[4]}),  "Could get 2 free mints ");
+    await assert.rejects( AnastasisAct2Mint.getFreeMint(signature.v, signature.r, signature.s, {from: minter}),  "Could get 2 free mints ");
     
     minter = accounts[5]
     signature = AL[minter]
-    await assert.rejects(AnastasisAct2Mint.getFreeMint({from: accounts[3]}),  "Could mint more than 30 tokens with the free mint ");
+    await assert.rejects(AnastasisAct2Mint.getFreeMint(signature.v, signature.r, signature.s, {from: accounts[3]}),  "Could mint more than 30 tokens with the free mint ");
   })
 
   it("... should have different odds of getting each piece", async ()=>{

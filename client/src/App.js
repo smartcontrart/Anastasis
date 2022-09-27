@@ -1,6 +1,7 @@
 import React from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
 // import Connect from './Components/Connect';
+import Home from './Components/Home';
 import Act1 from './Components/Act1';
 import Act2 from './Components/Act2';
 import Act3 from './Components/Act3';
@@ -10,7 +11,7 @@ import ContractInfoProvider from './Context/ContractInfo';
 import DropConfigProvider from './Context/DropConfig.js';
 import {Routes,Route} from "react-router-dom";
 import NavigationBar from './Components/Navigationbar';
-import background from './images/background.jpg'
+import background from './images/background.png'
 import './App.css'
 
 function App() {
@@ -19,22 +20,22 @@ function App() {
         <AccountInfoProvider>
           <ContractInfoProvider>
               <NavigationBar/>
-            <div className="background d-flex align-items-center justify-content-center" style={{backgroundImage: `url(${background})`,}}>
+            <div className="background" style={{backgroundImage: `url(${background})`,}}>
               <div className="App d-flex align-items-center justify-content-center">
               {/* <div className="background d-flex align-items-center justify-content-center"> */}
                 <Container>
                     <Row id='App_row' className="d-flex align-items-center justify-content-center">
                       <Col className="d-flex align-items-center justify-content-center">
                         <Routes>
-                          <Route path="/" element={<Act1/>}/>
-                          {/* <Route path="/about" element={<About/>}/>
-                          <Route path="/gallery" element={<Gallery />} />
-                          <Route path="/rename" element={<Rename />} /> */}
+                          <Route path="/" element={<Home/>}/>
+                          <Route path="/act1" element={<Act1/>}/>
+                          <Route path="/act2" element={<Act2/>}/>
+                          <Route path="/act3" element={<Act3 />}/>
                         </Routes>
                       </Col>
                     </Row>
                     <Row>
-                      <Col className="d-flex align-items-center justify-content-center">
+                      <Col className="">
                         <ConnexionStatus/>
                       </Col>
                     </Row>

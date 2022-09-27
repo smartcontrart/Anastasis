@@ -1,8 +1,5 @@
 import React, { Component } from "react";
 import Web3 from "web3";
-import Web3Modal from "web3modal";
-import WalletConnectProvider from "@walletconnect/web3-provider";
-import CoinbaseWalletSDK from '@coinbase/wallet-sdk';
 import { Button } from "react-bootstrap";
 import { AccountInfoContext } from '../Context/AccountInfo'
 import ALAct2 from "../AL/signedListAct2.json"
@@ -13,6 +10,8 @@ import Act3  from "../contracts/Anastasis_Act3.json";
 import Act1Mint  from "../contracts/AnastasisAuction.json";
 import Act2Mint  from "../contracts/AnastasisOpenEdition.json";
 import Act3Mint  from "../contracts/AnastasisLimitedEdition.json";
+import ash  from "../contracts/fakeASH.json";
+import fomo  from "../contracts/fakeFOMOverse.json";
 
 class Connect extends Component {
   
@@ -38,27 +37,35 @@ class Connect extends Component {
     // this.deployedNetwork = AIGirls.networks[this.networkId];
     this.Act1 = new this.web3.eth.Contract(
       Act1.abi,
-      parseInt(process.env.REACT_APP_GOERLI_NETWORK) && process.env.REACT_APP_GOERLI_CONTRACT_ADDRESS
+      parseInt(process.env.REACT_APP_GOERLI_CONTRACT_ACT1_ADDRESS) && process.env.REACT_APP_GOERLI_CONTRACT_ACT1_ADDRESS
     )
     this.Act1Mint = new this.web3.eth.Contract(
       Act1Mint.abi,
-      parseInt(process.env.REACT_APP_GOERLI_NETWORK) && process.env.REACT_APP_GOERLI_CONTRACT_ADDRESS
+      parseInt(process.env.REACT_APP_GOERLI_CONTRACT_ACT1MINT_ADDRESS) && process.env.REACT_APP_GOERLI_CONTRACT_ACT1MINT_ADDRESS
     )
     this.Act2 = new this.web3.eth.Contract(
       Act2.abi,
-      parseInt(process.env.REACT_APP_GOERLI_NETWORK) && process.env.REACT_APP_GOERLI_CONTRACT_ADDRESS
+      parseInt(process.env.REACT_APP_GOERLI_CONTRACT_ACT2_ADDRESS) && process.env.REACT_APP_GOERLI_CONTRACT_ACT2_ADDRESS
     )
     this.Act2Mint = new this.web3.eth.Contract(
       Act2Mint.abi,
-      parseInt(process.env.REACT_APP_GOERLI_NETWORK) && process.env.REACT_APP_GOERLI_CONTRACT_ADDRESS
+      parseInt(process.env.REACT_APP_GOERLI_CONTRACT_ACT2MINT_ADDRESS) && process.env.REACT_APP_GOERLI_CONTRACT_ACT2MINT_ADDRESS
     )
     this.Act3 = new this.web3.eth.Contract(
       Act3.abi,
-      parseInt(process.env.REACT_APP_GOERLI_NETWORK) && process.env.REACT_APP_GOERLI_CONTRACT_ADDRESS
+      parseInt(process.env.REACT_APP_GOERLI_CONTRACT_ACT3_ADDRESS) && process.env.REACT_APP_GOERLI_CONTRACT_ACT3_ADDRESS
     )
     this.Act3Mint = new this.web3.eth.Contract(
       Act3Mint.abi,
-      parseInt(process.env.REACT_APP_GOERLI_NETWORK) && process.env.REACT_APP_GOERLI_CONTRACT_ADDRESS
+      parseInt(process.env.REACT_APP_GOERLI_CONTRACT_ACT3MINT_ADDRESS) && process.env.REACT_APP_GOERLI_CONTRACT_ACT3MINT_ADDRESS
+    )
+    this.ashInstance = new this.web3.eth.Contract(
+      ash.abi,
+      parseInt(process.env.REACT_APP_GOERLI_CONTRACT_ASH_ADDRESS) && process.env.REACT_APP_GOERLI_CONTRACT_ASH_ADDRESS
+    )
+    this.FOMOVerseInstance = new this.web3.eth.Contract(
+      fomo.abi,
+      parseInt(process.env.REACT_APP_GOERLI_CONTRACT_FOMOVERSE_ADDRESS) && process.env.REACT_APP_GOERLI_CONTRACT_FOMOVERSE_ADDRESS
     )
     
     this.context.updateAccountInfo({Act1Instance: this.Act1Instance})
@@ -100,8 +107,14 @@ class Connect extends Component {
       this.context.updateAccountInfo({walletETHBalance: await this.web3.eth.getBalance(this.context.account)});
       let signedMessageAct2 = await this.findSignedMessageAct2(account);
       this.context.updateAccountInfo({signedMessageAct2: signedMessageAct2})
+      this.context.updateAccountInfo({hasMintedFreeAct2Token: await this.Act2MintInstance._biddersHasMinted(this.context.account).call()});
       let signedMessageAct3 = await this.findSignedMessageAct3(account);
-      this.context.updateAccountInfo({signedMessageAc3: signedMessageAct3})
+      this.context.updateAccountInfo({signedMessageAct3: signedMessageAct3})
+      this.context.updateAccountInfo({hasMintedAct3PrivateSale: await this.Act3MintInstance._addressMintedInPrivateSale(this.context.account).call()});
+      this.context.updateAccountInfo({hasMintedAct3PublicSale: await this.Act3MintInstance._addressMintedInPublicSale(this.context.account).call()});
+      this.context.updateAccountInfo({ashBalance: parseInt(await this.ashInstance.methods.balanceOf(this.context.account).call())})
+      this.context.updateAccountInfo({fomoBalance: parseInt(await this.FOMOVerseInstance.methods.balanceOf(this.context.account).call())})
+      this.context.updateAccountInfo({act2ContractAllowance: parseInt(await this.ashInstance.methods.allowance(this.context.account, process.env.REACT_APP_GOERLI_CONTRACT_ADDRESS).call())})
     }
   }
 
@@ -131,7 +144,7 @@ class Connect extends Component {
       this.context.updateAccountInfo({ashMintOpened: await this.Act3MintInstance.methods._ashMintOpened().call()})
       this.context.updateAccountInfo({ALMintOpened: await this.Act3MintInstance.methods._ALMintOpened().call()})
       this.context.updateAccountInfo({publicMintOpened: await this.Act3MintInstance.methods._publicMintOpened().call()})
-      this.context.updateAccountInfo({price: await this.Act3MintInstance.methods._publicMintOpened()._price()})
+      this.context.updateAccountInfo({price: await this.Act3MintInstance.methods._price().calls()})
     }
   }
 

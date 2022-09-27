@@ -23,7 +23,7 @@ contract AnastasisOpenEdition {
 
     mapping (address => bool) _isAdmin;
     mapping (address => uint256) _mintedQuantity;
-    mapping (address => bool) public _bidders;
+    mapping (address => bool) public _biddersHasMinted;
 
     constructor(){
         _isAdmin[msg.sender] = true;
@@ -81,7 +81,7 @@ contract AnastasisOpenEdition {
                                     msg.sender,
                                     _anastasisAct2Address,
                                     _mintOpened,
-                                    _bidders[msg.sender] // should be false
+                                    _biddersHasMinted[msg.sender] // should be false
                                 )
                             )
                         )
@@ -124,10 +124,10 @@ contract AnastasisOpenEdition {
     )external{
         require(_mintOpened, "Mint closed");
         require(mintAllowed(v, r, s), "Mint not allowed");
-        require(_mintedQuantity[msg.sender]<30,"Cannot mint more than 30 tokens");
+        require(_mintedQuantity[msg.sender] < 30,"Cannot mint more than 30 tokens");
         Anastasis_Act2(_anastasisAct2Address).mint(msg.sender, 1);
+        _biddersHasMinted[msg.sender] = true;
         _mintedQuantity[msg.sender] += 1;
-        _bidders[msg.sender] = false;
     }
 
 }

@@ -1,6 +1,7 @@
 html, body{
   /* text-align: center; */
   min-height: 100vh;
+  max-width: 100vw;
   /* height: auto; */
   /* width: 100vw; */
   background-color: black;
@@ -16,7 +17,7 @@ html, body{
 
 .App {
   text-align: center;
-  min-height: 100vh;
+  min-height: 89vh;
   height: 100%;
   /* background-color: black; */
   color: #f6f6f6;
@@ -86,7 +87,8 @@ html, body{
   background-repeat: no-repeat;
   background-size: cover;
   height: auto;
-  min-height: 100vh;
+  max-width: 100vw;
+  /* min-height: 100vh; */
   /* height:; */
  }
 
@@ -94,21 +96,14 @@ html, body{
   font-size: 1.2vw;
 }
 
-.carousel{
-  max-height: 55vh;
-  max-width: 55vw;
-  margin: auto;
+.visual{
+  height: 30vw;
 }
 
 .text-left{
   text-align: left;
 }
 
-.about_graphic{
-  width: 100%;
-  max-width: 40vw;
-  margin-left: -10vw;
-}
 
 #App_row{
   max-width: 100vw;
@@ -145,61 +140,6 @@ html, body{
 #UI_row{
   display: flex;
   justify-content: center;
-}
-
-#deposit_button{
-  color: black;
-  background-color: white !important;
-  border-color: black;
-  width: 12em;
-  border-radius: 0 !important;
-}
-
-#deposit_row{
-  display: flex;
-  justify-content: center;
-  padding: 0;
-  width: 100%;
-}
-
-#deposit_col{
-  display: flex;
-  width: 12em;
-  padding: 0;
-}
-
-#deposit_form{
-  padding: 0;
-  width: 12em;
-  margin: 0;
-  /* border-radius: 0 !important; */
-}
-
-#withdraw_button{
-  color: white;
-  background-color: black !important;
-  border-color: white;
-  width: 12em;
-  border-radius: 0 !important;
-}
-
-#withdrawal_row{
-  display: flex;
-  justify-content: center;
-  padding: 0;
-  width: 100%;
-}
-
-#withdrawal_col{
-  display: flex;
-  width: 12em;
-  padding: 0;
-}
-
-#withdrawal_form{
-  padding: 0;
-  width: 12em;
-  margin: 0;
 }
 
 #connect_button{
@@ -244,7 +184,37 @@ html, body{
   font-weight: lighter;
 }
 
+.no_padding{
+  padding: 0 !important;
+}
+
+.interface_col{
+  align-content: space-around !important;
+}
+
+.left-items{
+  display: flex;
+  justify-content: flex-start;
+}
+
+.grow { transition: all .2s ease-in-out; }
+.grow:hover{ transform: scale(1.5); }
+
+.large-text{
+  font-size: 1.3rem !important;
+}
+
+ul{list-style: none;}
+li::before{
+  content: '\25C6   ';
+  color: white;
+}
+
+.larger-text{
+  font-size: 1.2rem !important;
+}
 @media screen and (max-width: 650px) {
+
 
   .home_container{
     width: 100%;
@@ -258,7 +228,7 @@ html, body{
   }
 
   .text_left{
-    text-align: center;
+    text-align: left !important;
   }
 
   .about_graphic{
@@ -271,4 +241,34 @@ html, body{
     /* white-space: normal; */
   }
 
+  .visual{
+    height: 50vw;
+  }
 } 
+
+@media only screen and (max-width: 1200px) {
+  .visual{
+    height:45vw;
+  }
+}
+
+/* media md */
+@media only screen and (max-width: 992px) {
+  .xs-center{
+    justify-content: center !important;
+    text-align: center !important;
+  }
+  .visual{
+    height: 50vw;
+  }
+}
+
+@media only screen and (max-width: 767px) {
+  .visual{
+    height: 50vw;
+  }
+}
+
+@media only screen and (max-width: 600px) {
+
+}

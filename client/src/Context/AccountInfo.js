@@ -4,8 +4,14 @@ export const AccountInfoContext = createContext();
 
 class AccountInfoProvider extends Component {
     state = {
-        MoonbirdAddress: process.env.REACT_APP_MAINNET_MOONBIRD_ADDRESS,
-        birdblotterAddress: process.env.REACT_APP_MAINNET_CONTRACT_ADDRESS,
+        ashAddress: process.env.REACT_APP_GOERLI_CONTRACT_ASH_ADDRESS,
+        fomoAddress: process.env.REACT_APP_GOERLI_CONTRACT_FOMO_ADDRESS,
+        act1Address: process.env.REACT_APP_GOERLI_CONTRACT_ACT1_ADDRESS,
+        act1MintAddress: process.env.REACT_APP_GOERLI_CONTRACT_ACT1MINT_ADDRESS,
+        act2Address: process.env.REACT_APP_GOERLI_CONTRACT_ACT2_ADDRESS,
+        act2MintAddress: process.env.REACT_APP_GOERLI_CONTRACT_ACT2MINT_ADDRESS,
+        act3Address: process.env.REACT_APP_GOERLI_CONTRACT_ACT3_ADDRESS,
+        act3MintAddress: process.env.REACT_APP_GOERLI_CONTRACT_ACT3MINT_ADDRESS,
         birdblotterInstance: null,
         account: null,
         networkId: null,
