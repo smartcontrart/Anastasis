@@ -21,6 +21,7 @@ contract("AnastasisAct3", accounts => {
   let ashOEHolder= accounts[2];
   let selectedByArtist= accounts[3];
   let publicMinter= accounts[4];
+  let maxSupply = 14*33;
 
   beforeEach(async() =>{
     Ash = await Ash_contract.deployed();
@@ -40,6 +41,7 @@ contract("AnastasisAct3", accounts => {
     AnastasisAct3Address = await AnastasisAct3.address
     AnastasisAct3MintAddress = await AnastasisAct3Mint.address
     FundSplitAddress = await FundSplit.address
+    editionNumber = await AnastasisAct3._editionNumber.call();
   });
 
   
@@ -137,7 +139,6 @@ contract("AnastasisAct3", accounts => {
 
 
   it("... should prevent to mint more than 2 tokens for WL wallets", async ()=>{
-
     assert(await AnastasisAct3Mint.publicMint({from: fomoHolder, value: 0.03*10**18 }), "FOMO profile couldn't mint");
     assert(await AnastasisAct3Mint.publicMint({from: ashOEHolder, value: 0.03*10**18 }),"Ash profile couldn't mint");
     assert(await AnastasisAct3Mint.publicMint({from: selectedByArtist, value: 0.03*10**18 }),"AL profile couldn't mint");
@@ -147,10 +148,40 @@ contract("AnastasisAct3", accounts => {
     await assert.rejects(AnastasisAct3Mint.publicMint({from: publicMinter, value: 0.03*10**18 }));
   })
 
-  it("... should have max 33 tokens of each", async ()=>{
-    for(let i=1; i<=4;i++){
-      console.log(await AnastasisAct3.tokenURI(i));
+  it("... should prevent minting more than available supply", async ()=>{
+    for(let i=8; i<=maxSupply; i++){
+      assert(await AnastasisAct3Mint.publicMint({from: accounts[i], value: 0.03*10**18 }),"Public profile couldn't mint");
     }
+    await assert.rejects(AnastasisAct3Mint.publicMint({from:  accounts[maxSupply + 1], value: 0.03*10**18 }));
+  })
+
+  
+  it("... should have max 33 tokens of each", async ()=>{
+    let results = []
+    for(let i=1; i<=maxSupply; i++){
+      let result = await AnastasisAct3.tokenURI(i);
+      console.log(`iteration ${i}: returned: ${result}`)
+      results.push(result);
+    }
+
+    const occurrences = results.reduce(function (acc, curr) {
+      return acc[curr] ? ++acc[curr] : acc[curr] = 1, acc
+    }, {});
+    console.log(occurrences)
+  })
+
+  it("... should have max 33 tokens of each", async ()=>{
+    let results = []
+    for(let i=1; i<=maxSupply; i++){
+      let result = await AnastasisAct3._tokenURIs.call(i);
+      console.log(`iteration ${i}: returned: ${result}`)
+      results.push(result);
+    }
+
+    const occurrences = results.reduce(function (acc, curr) {
+      return acc[curr] ? ++acc[curr] : acc[curr] = 1, acc
+    }, {});
+    console.log(occurrences)
   })
 
   it("... should be burnable", async ()=>{

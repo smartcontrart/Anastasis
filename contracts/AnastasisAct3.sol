@@ -14,16 +14,20 @@ contract Anastasis_Act3 is ERC721, AdminControl {
     uint256 public _editionNumber = 33;
     uint256 public _tokenId = 1;
     uint256[] public _availableURIs;
+    uint256 public _maxSupply;
+    uint256 public _saURI;
     string public _uri;
     
     mapping (uint256 => uint256) _stock;
     mapping(uint256 => uint256) public _tokenURIs;
     
     constructor () ERC721("f-1 Anastasis - Act3", "f-1 AA3") {
-        _availableURIs = [1,2,3,4,5];
-        for(uint256 i = 0; i <= _availableURIs.length; i++){
+        _availableURIs = [1,2,3,4,5,6,7,8,9,10,11,12,13,14];
+        _saURI = _availableURIs.length;
+        for(uint256 i = 1; i <= _availableURIs.length; i++){
             _stock[i] = _editionNumber;
         }
+        _maxSupply = _availableURIs.length * _editionNumber;
         _royalties_recipient = payable(msg.sender);
         _royaltyAmount = 10;
     }
@@ -45,6 +49,7 @@ contract Anastasis_Act3 is ERC721, AdminControl {
     function mint( 
         address to
     ) external adminRequired{
+        require(_tokenId <= _maxSupply, "Max supply reached");
         _mint(to, _tokenId);
         uint256 uri = getURI();
         _tokenURIs[_tokenId] = uri;
@@ -52,18 +57,23 @@ contract Anastasis_Act3 is ERC721, AdminControl {
     }
 
     function getURI()internal returns(uint256){
-        
         uint256 rnd = getPseudoRandomNumber(_availableURIs.length, msg.sender);
         uint256 uri = _availableURIs[rnd];
         if(_stock[uri] == 1){
             removeToken(rnd);
         }
-        _stock[uri] -= 1;
+        _stock[uri] -= 1;   
+        if(uri == _saURI){
+            uri = _saURI + _stock[uri];
+        }
+        require(uri>0,'invalid URI');
         return uri;
     }
 
     function removeToken(uint index) public{
+        if(_availableURIs.length>1){
         _availableURIs[index] = _availableURIs[_availableURIs.length - 1];
+        }
         _availableURIs.pop();
     }
 
