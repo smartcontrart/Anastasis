@@ -21,7 +21,7 @@ function Act1() {
     const [alert, setAlert] = useState({active: false, content: null, variant: null})
     const [quantity, setQuantity] =  useState(0);
 
-    const visuals = [one, two, three, four, five, six, seven, eight, nine, ten, eleven, twelve]
+    const visuals = [one, two, three, four, five, six, seven, eight, nine, ten, eleven, twelve]         
 
     function displayAlert( message, variant){
         setAlert({active: true, content: message, variant: variant})
@@ -92,7 +92,7 @@ function Act1() {
             catch (error){
                 ashApprovalFailed = true
                 accountInfo.updateAccountInfo({userFeedback: null})
-                setAlert({active: true, content: error.message, variant: "warning"})
+                displayAlert(error.message, "warning")
             }
         }
         if(!ashApprovalFailed){
@@ -105,7 +105,7 @@ function Act1() {
             }
             catch(error){
                 console.log(error)
-                setAlert({active: true, content: error.message, variant: "danger"})
+                displayAlert(error.message, "danger")
             }
         }
         accountInfo.updateAccountInfo({contractAllowance: parseInt(await accountInfo.ashInstance.methods.allowance(accountInfo.account, accountInfo.ashAddress).call())})
@@ -122,7 +122,7 @@ function Act1() {
             ).send({from: accountInfo.account, value: (price * quantity).toString()});
         }
         catch(error){
-            setAlert({active: true, content: error.message, variant: "danger"})
+            displayAlert(error.message, "danger")
         }
     }
 
