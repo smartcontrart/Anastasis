@@ -62,8 +62,8 @@ contract("FundSplit", accounts => {
 
 
   it("... should allow to do admin stuff", async ()=>{
-    await assert.rejects( AnastasisAct2.setURI(15, 'test', {from: accounts[1]}), "Admin Could not set the AnastasisAct2Mint as an admin");
-    assert(await AnastasisAct2.setURI(15, 'blob'), "Admin Could not set the AnastasisAct2Mint as an admin");
+    await assert.rejects( AnastasisAct2.setURI('test', {from: accounts[1]}), "Admin Could not set the AnastasisAct2Mint as an admin");
+    assert(await AnastasisAct2.setURI('blob'), "Admin Could not set the AnastasisAct2Mint as an admin");
   })
 
   it("... should recieve ASH and track the balance", async ()=>{

@@ -95,7 +95,7 @@ contract("AnastasisAct3", accounts => {
     let balance = await Ash.balanceOf(ashOEHolder);
     assert(balance.toString() == amount.toString(), "ashOEHolder did not mint ash");
     
-    assert(await AnastasisAct2.setURI(15, 'test', {from: accounts[0]}), "Could not mint FOMO");
+    assert(await AnastasisAct2.setURI('test', {from: accounts[0]}), "Could not mint FOMO");
     assert(await AnastasisAct2.mint(ashOEHolder, 1, {from: accounts[0]}), "Could not mint FOMO");
     assert(await AnastasisAct2.balanceOf(ashOEHolder)== (1).toString(),"Didn't mint OE");
     

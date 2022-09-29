@@ -8,13 +8,13 @@
 // 2) Set URI (urisNumber = total URIs; uri= Arweave link)
 // 3) Deploy the auction contract
 // 4) Set Auction contract as AnastasisAct1 contract admin
-// 5) Set FundSplit as recipient for the AnastasisAct1Mint contract
-// 6) Setup the auction:
+// 5) Setup the auction:
             contract to mint: AnastasisAct1,  
             startingPrice: 0.005, 
             reservePrice: TBD
             minBid: TBD,
             auctionBeneficiary: TBD)
+// 6) Start Auction
 
 
 // Anastasis Act 2
@@ -24,8 +24,9 @@
 // 4) Set Mint contract as AnastasisAct2 contract admin
 // 5) Set FundSplit as recipient for the AnastasisAct2Mint contract
 // 6) Check AnastasisAct2address in AnastasisAct2Mint
-// 7) Check FOMOverse address
-// 8) Check Ash address
+// 7) Check FOMOverse address in AnastasisAct2Mint
+// 8) Check Ash address in AnastasisAct2Mint
+// 9) Set Signer in AnastasisAct2Mint
 // 9) Open the drop
 
 

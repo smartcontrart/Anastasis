@@ -89,8 +89,8 @@ contract("AnastasisAct2", accounts => {
 
 
   it("... should allow to do admin stuff", async ()=>{
-    await assert.rejects( AnastasisAct2.setURI(15, 'test', {from: accounts[1]}), "Admin Could not set the AnastasisAct2Mint as an admin");
-    assert(await AnastasisAct2.setURI(15, 'test'), "Admin Could not set the AnastasisAct2Mint as an admin");
+    await assert.rejects( AnastasisAct2.setURI('test', {from: accounts[1]}), "Admin Could not set the AnastasisAct2Mint as an admin");
+    assert(await AnastasisAct2.setURI('test'), "Admin Could not set the AnastasisAct2Mint as an admin");
   })
 
   it("... should setup the mint contract correctly", async ()=>{

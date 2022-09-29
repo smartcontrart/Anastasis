@@ -11,7 +11,6 @@ contract Anastasis_Act2 is ERC721A, AdminControl {
     
     address payable  private _royalties_recipient;
     uint256 private _royaltyAmount; //in % 
-    uint256 public _uriNumber;
     uint256 public _tokenId = 1;
     string public _uri;
     
@@ -69,10 +68,8 @@ contract Anastasis_Act2 is ERC721A, AdminControl {
     }
 
     function setURI(
-        uint256 uriNumber,
         string calldata updatedURI
     ) external adminRequired{
-        _uriNumber = uriNumber;
         _uri = updatedURI;
     }
 
