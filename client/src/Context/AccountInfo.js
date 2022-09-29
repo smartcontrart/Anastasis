@@ -17,7 +17,7 @@ class AccountInfoProvider extends Component {
         networkId: null,
         transactionInProgress: false,
         userFeedback: null,
-        contractNetwork: process.env.REACT_APP_MAINNET_NETWORK,
+        contractNetwork: process.env.REACT_APP_GOERLI_NETWORK,
         walletETHBalance: 0,
         mintPrice: 0,
         signedMessage: null,
