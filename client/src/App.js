@@ -5,6 +5,8 @@ import Home from './Components/Home';
 import Act1 from './Components/Act1';
 import Act2 from './Components/Act2';
 import Act3 from './Components/Act3';
+import Act3Creator from './Components/Act3Creator';
+import Team from './Components/Team';
 import ConnexionStatus from './Components/ConnexionStatus';
 import AccountInfoProvider from './Context/AccountInfo';
 import ContractInfoProvider from './Context/ContractInfo';
@@ -31,6 +33,8 @@ function App() {
                           <Route path="/act1" element={<Act1/>}/>
                           <Route path="/act2" element={<Act2/>}/>
                           <Route path="/act3" element={<Act3 />}/>
+                          <Route path="/team" element={<Team />}/>
+                          <Route path="/friends" element={<Act3Creator />}/>
                         </Routes>
                       </Col>
                     </Row>

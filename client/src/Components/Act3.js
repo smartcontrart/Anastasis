@@ -1,26 +1,26 @@
-import React, {useState, useContext} from "react";
+import React, {useState, useContext, useEffect} from "react";
 import {Container, Row, Col, Button, Spinner, Alert} from 'react-bootstrap'
 import { AccountInfoContext } from "../Context/AccountInfo";
-import one from '../images/visuals Act1/1.png'
-import two from '../images/visuals Act1/2.png'
-import three from '../images/visuals Act1/3.png'
-import four from '../images/visuals Act1/4.png'
-import five from '../images/visuals Act1/5.png'
-import six from '../images/visuals Act1/6.png'
-import seven from '../images/visuals Act1/7.png'
-import eight from '../images/visuals Act1/8.png'
-import nine from '../images/visuals Act1/9.png'
-import ten from '../images/visuals Act1/10.png'
-import eleven from '../images/visuals Act1/11.png'
-import twelve from '../images/visuals Act1/12.png'
+import one from '../images/visuals Act3/1.png'
+import two from '../images/visuals Act3/2.png'
+import three from '../images/visuals Act3/3.png'
+import four from '../images/visuals Act3/4.png'
+import five from '../images/visuals Act3/5.png'
+import six from '../images/visuals Act3/6.png'
+import seven from '../images/visuals Act3/7.png'
 
 import '../App.css'
 
 function Act3() {
     let accountInfo = useContext(AccountInfoContext)
     const [alert, setAlert] = useState({active: false, content: null, variant: null})
-
-    const visuals = [one, two, three, four, five, six, seven, eight, nine, ten, eleven, twelve]     
+    const visuals = [one, two, three, four, five, six, seven]     
+    const [visual, setVisual] = useState(0);
+    
+    useEffect(()=>{
+        let rnd = Math.floor(Math.random() * visuals.length)
+        setVisual(rnd);
+    },[visuals.length])
 
     function displayAlert( message, variant){
         setAlert({active: true, content: message, variant: variant})
@@ -51,43 +51,107 @@ function Act3() {
         }
     }
 
-    async function handleMint(){
+    async function handlePublicMint(){
         let price = accountInfo.price
         accountInfo.updateAccountInfo({userFeedback: "Minting..."})
-        if(accountInfo.publicMintOpened){
+        try{
+            await accountInfo.Act3MintInstance.methods.publicMint(
+            ).send({from: accountInfo.account, value: (price).toString()});
+            displayAlert('Mint Successful', "success")
+        }
+        catch(error){
+            displayAlert(error.message, "danger")
+        }
+        accountInfo.updateAccountInfo({userFeedback: null})
+    }
+
+    async function handlePrivateMint(){
+        let price = accountInfo.price
+        accountInfo.updateAccountInfo({userFeedback: "Minting..."})
+        if(accountInfo.ALMintOpened && accountInfo.signedMessageAct3){
             try{
-                await accountInfo.act2MintAddress.methods.publicMint(
-                ).send({from: accountInfo.account, value: (price).toString()});
-            }
-            catch(error){
-                displayAlert(error.message, "danger")
-            }
-        }else if(accountInfo.ALMintOpened){
-            try{
-                await accountInfo.act2MintAddress.methods.selectedMint(
+                await accountInfo.Act3MintInstance.methods.selectedMint(
                     accountInfo.signedMessageAct3.v,
                     accountInfo.signedMessageAct3.r,
                     accountInfo.signedMessageAct3.s
                 ).send({from: accountInfo.account, value: (price).toString()});
+                displayAlert('Mint Successful', "success")
             }
             catch(error){
                 displayAlert(error.message, "danger")
             }
-        }else if(accountInfo.ashMintOpened){
+        }else if(accountInfo.ashMintOpened && accountInfo.ashBalance >= (25*10**18) && accountInfo.act2Balance >= 1){
             try{
-                await accountInfo.act2MintAddress.methods.ashHoldersMint(
+                await accountInfo.Act3MintInstance.methods.ashHoldersMint(
                 ).send({from: accountInfo.account, value: (price).toString()});
+                displayAlert('Mint Successful', "success")
             }
             catch(error){
                 displayAlert(error.message, "danger")
             }
-        }else if(accountInfo.FOMOMintOpened){
+        }else if(accountInfo.FOMOMintOpened && accountInfo.fomoBalance >= 1){
             try{
-                await accountInfo.act2MintAddress.methods.fomoHoldersMint(
+                await accountInfo.Act3MintInstance.methods.fomoHoldersMint(
                 ).send({from: accountInfo.account, value: (price).toString()});
+                displayAlert('Mint Successful', "success")
             }
             catch(error){
                 displayAlert(error.message, "danger")
+            }
+        }
+        accountInfo.updateAccountInfo({userFeedback: null})
+    }
+
+
+
+    function renderPublicSaleButton(){
+        return(
+            <Row className="mb-3 d-flex justify-content-left xs-center">
+                <Button variant='secondary' style={{maxWidth: '150px'}} className='mx-2' onClick={()=>handlePublicMint()}>Mint Public Sale</Button>
+            </Row>
+        )
+    }
+
+    function renderPrivateSaleButton(){
+        return(
+            <Row className="mb-3 d-flex justify-content-left xs-center">
+                <Button variant='outline-light' style={{maxWidth: '150px'}} className='mx-2' onClick={()=>handlePrivateMint()}>Mint Private Sale</Button>
+            </Row>
+        )
+    }
+
+    function renderPrivateSaleInterface(){
+        if(accountInfo.account){
+            let isFOMOHolder = accountInfo.fomoBalance >= 1 ? true : false;
+            let isASHOEHolder = accountInfo.act2Balance >= 1 && accountInfo.ashBalance >= (25*10**18) ? true : false;
+            let isAL = accountInfo.signedMessageAct3 ? true :  false
+            
+            if( (accountInfo.FOMOMintOpened && isFOMOHolder) ||
+                (accountInfo.ashMintOpened && isASHOEHolder) ||
+                (accountInfo.ALMintOpened && isAL)) {
+                if(accountInfo.hasMintedAct3PrivateSale && !accountInfo.hasMintedAct3PublicSale){
+                    return null
+                }else if(accountInfo.hasMintedAct3PrivateSale && accountInfo.hasMintedAct3PublicSale){
+                    return null
+                }else{
+                    return renderPrivateSaleButton()
+                }
+            }else{
+                return null
+            }
+        }
+    }
+
+    function renderPublicSaleInterface(){
+        if(accountInfo.account){
+            if( accountInfo.publicMintOpened) {
+                if(accountInfo.hasMintedAct3PublicSale){
+                    return <div className="xs-center text-left">Thank you for minting!</div>
+                }else{
+                    return renderPublicSaleButton()
+                }
+            }else{
+                return null
             }
         }
     }
@@ -97,20 +161,73 @@ function Act3() {
             return <div className="text-left"> No wallet detected</div>
         }else{
             if(accountInfo.account){
-                if(accountInfo.FOMOMintOpened || accountInfo.ashMintOpened || accountInfo.ALMintOpened || accountInfo.publicMintOpened){
-                    return (
-                        <Row>
-                            <Button variant='secondary' style={{maxWidth: '150px'}} className='mx-2' onClick={()=>handleMint()}>Mint</Button>
-                        </Row>
-                    )
+                if(!accountInfo.FOMOMintOpened && !accountInfo.ashMintOpened && !accountInfo.ALMintOpened){
+                    return <div>Drop currently closed</div>
                 }else{
-                    return <div className="text-left"><b>Drop Closed</b></div>
+                    return(
+                        <React.Fragment>
+                            {renderPrivateSaleInterface()}
+                            {renderPublicSaleInterface()}
+                        </React.Fragment>
+                    )
                 }
-            }else{
-                return <div>Please connect your wallet</div>
             }
         }
     }
+                
+
+    // function renderUserInterface(){
+    //     if(!window.ethereum){
+    //         return <div className="text-left"> No wallet detected</div>
+    //     }else{
+    //         if(accountInfo.account){
+    //             if(accountInfo.publicMintOpened){
+    //                 if(accountInfo.hasMintedAct3PublicSale){
+    //                     return <div className="text-left">Thank you for minting !</div>
+    //                 }else{
+    //                     if(accountInfo.signedMessageAct3 || (accountInfo.act2Balance >= 1 && accountInfo.ashBalance >= (25*10**18)) || accountInfo.fomoBalance >= 1){
+    //                         return(
+    //                             <React.Fragment>
+    //                                 {renderPrivateSaleButton()}
+    //                                 {renderPublicSaleButton()}
+    //                             </React.Fragment>
+    //                         )
+    //                     }else{
+    //                         return renderPublicSaleButton()
+    //                     }
+    //                 }
+    //             }else if(accountInfo.ALMintOpened|| accountInfo.ashMintOpened || accountInfo.FOMOMintOpened){
+    //                 if(accountInfo.hasMintedAct3PrivateSale){
+    //                     return <div className="text-left">Thank you for minting during the private sale.<br/> Please come back during the public sale</div>
+    //                 }else if(accountInfo.signedMessageAct3){
+    //                     return renderPrivateSaleButton()
+    //                 }else{
+    //                     return <div>Not eligible to mint</div>
+    //                 }
+    //             }else if(accountInfo.ashMintOpened || accountInfo.FOMOMintOpened){
+    //                 if(accountInfo.hasMintedAct3PrivateSale){
+    //                     return <div className="text-left">Thank you for minting during the private sale.<br/> Please come back during the public sale</div>
+    //                 }else if(accountInfo.act2Balance >= 1 && accountInfo.ashBalance >= (25*10**18)){
+    //                     return renderPrivateSaleButton()
+    //                 }else{
+    //                     return <div>Not eligible to mint</div>
+    //                 }
+    //             }else if(accountInfo.FOMOMintOpened){
+    //                 if(accountInfo.hasMintedAct3PrivateSale){
+    //                     return <div className="text-left">Thank you for minting during the private sale.<br/> Please come back during the public sale</div>
+    //                 }else if(accountInfo.fomoBalance >= 1 ){
+    //                     return renderPrivateSaleButton()
+    //                 }else{
+    //                     return <div>Not eligible to mint this phase. That will change!</div>
+    //                 }
+    //             }else{
+    //                 return <div>Drop Closed</div>
+    //             }
+    //         }else{
+    //             return <div>Please connect your wallet</div>
+    //         }
+    //     }
+    // }
 
     function renderCurrentMinters(){
         if(accountInfo.publicMintOpened){
@@ -119,11 +236,11 @@ function Act3() {
             )
         }else if(accountInfo.ALMintOpened){
             return(
-                <div>Allow List</div>
+                <div>FOMO holders <br/>Ash and Anastasis Act 2 holders <br/>Allow List</div>
             )
         }else if(accountInfo.ashMintOpened){
             return(
-                <div>Ash holders</div>
+                <div>FOMO holders <br/> Ash and Anastasis Act 2 holders</div>
             )
         }else if(accountInfo.FOMOMintOpened){
             return(
@@ -143,7 +260,7 @@ function Act3() {
             <Row id="description_row">
                 <Col xs={12} lg={6} className='mb-5'>
                     <img
-                     src={one}
+                     src={visuals[visual]}
                      alt='visual'
                      className="visual">
 
@@ -152,8 +269,8 @@ function Act3() {
                 <Col xs={12} lg={6} className='d-flex'>
                     <Container fluid className='larger-text'>
                         <Row className="text_left mb-3">
-                                <span className="xs-center text-left"><b>14 artists in 14 pieces.</b></span>
-                                <span className="xs-center text-left"><b>33 editon per piece</b></span>
+                                <span className="xs-center text-left"><b>8 artists in 8 pieces.</b></span>
+                                <span className="xs-center text-left"><b>33 editions per piece</b></span>
                                 <span className="xs-center text-left"><b>A sequenced drop: </b>
                                     <ul>
                                         <li>

@@ -137,14 +137,12 @@ contract("AnastasisAct1", accounts => {
   })
 
   it("... should return a diffent URI every 8 hours", async ()=>{
-    assert(await AnastasisAct1.setURI(8, 'test'), "Could not set URI")
-    for(i=1; i<10; i++){
+    assert(await AnastasisAct1.setURI(14, 'test'), "Could not set URI")
+    for(i=1; i<50; i++){
       uri = await AnastasisAct1.tokenURI(1);
       console.log(uri)
-      assert(await AnastasisAct1.setURI(8, `test`), "Could not set URI")
+      assert(await AnastasisAct1.setURI(14, `test`), "Could not set URI")
     }
-
-
   })
 
   it("... should allow to burn a token", async () =>{

@@ -12,8 +12,8 @@ contract AnastasisLimitedEdition {
 
     address public _ashAddress= 0x64D91f12Ece7362F91A6f8E7940Cd55F05060b92;
     address public _fomoverseAddress = 0x74BB71a4210E33256885DEF483fD4227b7f9D88F;
-    address public _anastasisAct2Address= 0x64D91f12Ece7362F91A6f8E7940Cd55F05060b92;
-    address public _anastasisAct3Address= 0x64D91f12Ece7362F91A6f8E7940Cd55F05060b92;
+    address public _anastasisAct2Address;
+    address public _anastasisAct3Address;
     address private _recipient;
     address private _signer;
 
@@ -22,9 +22,9 @@ contract AnastasisLimitedEdition {
     bool public _ALMintOpened;
     bool public _publicMintOpened;
 
-    mapping (address => bool) _isAdmin;
-    mapping (address => bool) _addressMintedInPublicSale;
-    mapping (address => bool) _addressMintedInPrivateSale;
+    mapping (address => bool) public _isAdmin;
+    mapping (address => bool) public _addressMintedInPublicSale;
+    mapping (address => bool) public _addressMintedInPrivateSale;
 
 
     constructor(){

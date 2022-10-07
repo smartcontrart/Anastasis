@@ -43,7 +43,7 @@ contract FundSplit {
         require(beneficiaries.length == split.length,"Invalid values");
         delete _beneficiaries;
         _beneficiaries = beneficiaries;
-        for(uint256 i = 0; i < split.length; i++){
+        for(uint256 i = 0; i < split.length; i++){  
             _split[beneficiaries[i]]= split[i];
         }
     }
@@ -61,26 +61,6 @@ contract FundSplit {
     function getAshBalance()external view returns(uint256){
         return(IERC20(_ashAddress).balanceOf(address(this)));
     }
-
-    // function splitAllAsh()external adminOnly{
-    //     address [] memory beneficiaries = _beneficiaries;
-    //     bool success;
-    //     uint256 ashBalance = IERC20(_ashAddress).balanceOf(address(this));
-    //     for(uint256 i =0 ; i < beneficiaries.length; i++){
-    //         success = IERC20(_ashAddress).transfer(beneficiaries[i], (ashBalance * _split[beneficiaries[i]])/100);
-    //         require(success, "could not withdraw thee Ash");
-    //     }
-    // }
-
-    // function splitAllEth()external adminOnly{
-    //     address [] memory beneficiaries = _beneficiaries;
-    //     bool success;
-    //     uint256 ethBalance =  address(this).balance;
-    //     for(uint256 i =0 ; i < _beneficiaries.length; i++){
-    //         success = payable(beneficiaries[i]).send((ethBalance * _split[beneficiaries[i]])/100);
-    //         require(success, "could not withdraw thee Eth");
-    //     }
-    // }
 
     function splitAsh(uint256 amount)external adminOnly{
         uint256 contractAshBalance = IERC20(_ashAddress).balanceOf(address(this));
@@ -106,16 +86,19 @@ contract FundSplit {
         }
     }
 
-    function withdrawAllEth(address recipient) external adminOnly{
+    function withdrawEth(address recipient, uint256 amount) external adminOnly{
+        uint256 contractEthBalance =  address(this).balance;
+        require(amount <= contractEthBalance, "Contract doesn't have enough Eth");
         bool success;
-        success = payable(recipient).send(address(this).balance);
+        success = payable(recipient).send(amount);
         require(success, "Failed to withdraw Eth");
     }
 
-    function withdrawAllAsh(address recipient)external adminOnly{
+    function withdrawAsh(address recipient, uint256 amount)external adminOnly{
+        uint256 contractAshBalance = IERC20(_ashAddress).balanceOf(address(this));
+        require(amount <= contractAshBalance, "Contract doesn't have enough Ash");
         bool success;
-        uint256 ashBalance = IERC20(_ashAddress).balanceOf(address(this));
-        success = IERC20(_ashAddress).transfer(recipient, ashBalance);
+        success = IERC20(_ashAddress).transfer(recipient, amount);
         require(success, "Could not withdraw all Ash");
     }
 

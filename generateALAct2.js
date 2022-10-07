@@ -2,7 +2,7 @@ require('dotenv').config()
 const fs = require('fs');
 const AL = require("./ContractData/AL/ALAct2.json")
 const ALaddresses = AL.addresses;
-var contract_address = process.env.DEV_CONTRACT_ACT2_ADDRESS;
+var contract_address = process.env.PROD_CONTRACT_ACT2_ADDRESS;
 const signer = web3.eth.accounts.wallet.add(process.env.DEV_WALLET_1_PRIVKEY);
 console.log(web3)
 

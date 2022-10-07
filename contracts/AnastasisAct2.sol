@@ -11,7 +11,7 @@ contract Anastasis_Act2 is ERC721A, AdminControl {
     
     address payable  private _royalties_recipient;
     uint256 private _royaltyAmount; //in % 
-    uint256 public _tokenId = 1;
+    uint256 public _tokenId = 0;
     string public _uri;
     
     mapping(uint256 => uint256) public _tokenURIs;
@@ -41,12 +41,12 @@ contract Anastasis_Act2 is ERC721A, AdminControl {
         uint256 quantity
     ) external adminRequired{
         for(uint256 i=0; i < quantity; i++){
-            uint256 rarity = getPseudoRandomNumber(10);
+            uint256 rarity = getPseudoRandomNumber(100);
             uint256 uri;
-            if(rarity == 0){
-                uri = getPseudoRandomNumber(3) + 1;
-            }else if(rarity == 1 || rarity == 2){
-                uri = getPseudoRandomNumber(4) + 4;
+            if(rarity < 5){
+                uri = getPseudoRandomNumber(2) + 1;
+            }else if(rarity < 22){
+                uri = getPseudoRandomNumber(5) + 3;
             }else{
                 uri = getPseudoRandomNumber(7) + 8;
             }

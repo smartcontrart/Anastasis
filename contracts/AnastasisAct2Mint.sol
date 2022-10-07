@@ -19,7 +19,7 @@ contract AnastasisOpenEdition {
     address private _fundSplitAddress;
     address private _signer;
 
-    bool _mintOpened;
+    bool public _mintOpened;
 
     mapping (address => bool) _isAdmin;
     mapping (address => uint256) _mintedQuantity;
@@ -49,14 +49,9 @@ contract AnastasisOpenEdition {
         _anastasisAct2Address = anastasisAct2Address;
     }
 
-    function approveAdmin(address newAdmin)external{
+    function toggleAdmin(address newAdmin)external{
         require(_isAdmin[msg.sender]);
-        _isAdmin[newAdmin] = true;
-    }
-
-    function removeAdmin(address exAdmin)external{
-        require(_isAdmin[msg.sender]);
-        _isAdmin[exAdmin] = false;
+        _isAdmin[newAdmin] = !_isAdmin[newAdmin];
     }
     
     function toggleMintOpened()external{
@@ -97,20 +92,18 @@ contract AnastasisOpenEdition {
         require(quantity <= 10, "Cannot mint more than 10 tokens in one transaction");
         
         bool hasDiscount = false;
-        uint256 price;
         bool success;
         if(
-            IERC20(_ashAddress).balanceOf(msg.sender) > 25*10**18 || 
+            IERC20(_ashAddress).balanceOf(msg.sender) >= 25*10**18 || 
             IERC721(_fomoverseAddress).balanceOf(msg.sender) >= 1
         ){hasDiscount = true;}
         if(payInEth){
-            price = hasDiscount ? _holderPrice : _publicPrice;
+            uint256 price = hasDiscount ? _holderPrice : _publicPrice;
             require(msg.value >= price * quantity, "Not enough funds");
             success = payable(_fundSplitAddress).send(price * quantity);
         }else{
             address payable fundSplitContract = payable(address(_fundSplitAddress));
-            success = IERC20(_ashAddress).transferFrom(msg.sender, fundSplitContract, price * quantity);
-            FundSplit(fundSplitContract).depositAsh(msg.sender, _ashPrice * quantity);
+            success = FundSplit(fundSplitContract).depositAsh(msg.sender, _ashPrice * quantity);
         }
         require(success, "Funds could not transfer");
         Anastasis_Act2(_anastasisAct2Address).mint(msg.sender, quantity);

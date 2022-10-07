@@ -1,18 +1,8 @@
 import React, {useState, useContext} from "react";
 import {Container, Row, Col, Button, Spinner, Alert, Form} from 'react-bootstrap'
+import Timer from "./Timer";
 import { AccountInfoContext } from "../Context/AccountInfo";
-import one from '../images/visuals Act1/1.png'
-import two from '../images/visuals Act1/2.png'
-import three from '../images/visuals Act1/3.png'
-import four from '../images/visuals Act1/4.png'
-import five from '../images/visuals Act1/5.png'
-import six from '../images/visuals Act1/6.png'
-import seven from '../images/visuals Act1/7.png'
-import eight from '../images/visuals Act1/8.png'
-import nine from '../images/visuals Act1/9.png'
-import ten from '../images/visuals Act1/10.png'
-import eleven from '../images/visuals Act1/11.png'
-import twelve from '../images/visuals Act1/12.png'
+import visual from '../images/visuals Act2/act2 image.png'
 
 import '../App.css'
 
@@ -20,8 +10,7 @@ function Act1() {
     let accountInfo = useContext(AccountInfoContext)
     const [alert, setAlert] = useState({active: false, content: null, variant: null})
     const [quantity, setQuantity] =  useState(0);
-
-    const visuals = [one, two, three, four, five, six, seven, eight, nine, ten, eleven, twelve]         
+    const weAreLive = true;
 
     function displayAlert( message, variant){
         setAlert({active: true, content: message, variant: variant})
@@ -54,39 +43,50 @@ function Act1() {
 
 
     async function handleChange(event){    
-        console.log(event.target.value)
         setQuantity(event.target.value)
     }
 
+    function renderOptions(options){
+        return(
+            <React.Fragment>
+                {options.map((option,idx)=>{
+                    if(option ===0){
+                        return <option value={option.toString()} key={idx}>Mint quantity</option>
+                    }else{
+                        return(
+                            <option value={option.toString()} key={idx}>{option}</option>
+                        )
+                    }
+                })}
+            </React.Fragment>
+        )
+    }
+
     function renderQuantityInput(){
+
+        let limit = accountInfo.act2Balance ? Math.min(10, 30 - accountInfo.act2Balance) : 10;
+        let options = [...Array(limit + 1).keys()]
         return(
             <Form style={{maxWidth: 200}}>
                 <Form.Select onChange={handleChange} aria-label="Mint quantity">
-                    <option value="invalid">Mint quantity</option>
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4">4</option>
-                    <option value="5">5</option>
-                    <option value="6">6</option>
-                    <option value="7">7</option>
-                    <option value="8">8</option>
-                    <option value="9">9</option>
-                    <option value="10">10</option>
+                    {renderOptions(options)}
                 </Form.Select>
             </Form>
         )
     }
 
     async function handleAshMint(){
-        let allowance = accountInfo.act2ContractAllowance
+        let allowance = accountInfo.fundSplitAllowance
         let price = accountInfo.ashPrice
         let ashApprovalFailed = false
-
-        if(allowance < price){
+        if(quantity === 0){
+            displayAlert('Please select a valid quantity', "warning");
+            return null
+        }
+        if(allowance < price * quantity){
             accountInfo.updateAccountInfo({userFeedback: "Approving ASH"})
             try{
-                await accountInfo.ashInstance.methods.approve(accountInfo.act2MintAddress, (price).toString()).send({from: accountInfo.account})
+                await accountInfo.ashInstance.methods.approve(process.env.REACT_APP_MAINNET_CONTRACT_FUNDSPLIT_ADDRESS, (price*quantity).toString()).send({from: accountInfo.account})
                 accountInfo.updateAccountInfo({contractAllowance: parseInt(await accountInfo.ashInstance.methods.allowance(accountInfo.account, accountInfo.ashAddress).call())})
             }
             catch (error){
@@ -98,10 +98,11 @@ function Act1() {
         if(!ashApprovalFailed){
             accountInfo.updateAccountInfo({userFeedback: "Minting..."})
             try{
-                await accountInfo.act2MintAddress.methods.mint(
+                await accountInfo.Act2MintInstance.methods.mint(
                     false,
                     quantity
                 ).send({from: accountInfo.account});
+                displayAlert('Mint Successful', "success")
             }
             catch(error){
                 console.log(error)
@@ -113,33 +114,43 @@ function Act1() {
     }
 
     async function handleEthMint(){
-        let price = (accountInfo.fomoBalance > 0 || accountInfo.ashBalamce > 25*10**18) ? accountInfo.holderPrice : accountInfo.publicPrice;
+        if(quantity === 0){
+            displayAlert('Please select a valid quantity', "warning");
+            return null
+        }
+        let price = (accountInfo.fomoBalance >= 1 || accountInfo.ashBalance >= 25*10**18) ? accountInfo.holderPrice : accountInfo.publicPrice;
+        
+
         accountInfo.updateAccountInfo({userFeedback: "Minting..."})
         try{
-            await accountInfo.act2MintAddress.methods.mint(
+            await accountInfo.Act2MintInstance.methods.mint(
                 true,
                 quantity
             ).send({from: accountInfo.account, value: (price * quantity).toString()});
+            displayAlert('Mint Successful', "success")
         }
         catch(error){
             displayAlert(error.message, "danger")
         }
+        accountInfo.updateAccountInfo({userFeedback: null})
     }
 
 
     async function handleFreeMint(){
         accountInfo.updateAccountInfo({userFeedback: "Minting..."})
         try{
-            await accountInfo.act2MintAddress.methods.getFreeMint(
+            await accountInfo.Act2MintInstance.methods.getFreeMint(
                 accountInfo.signedMessageAct2.v,
                 accountInfo.signedMessageAct2.r,
                 accountInfo.signedMessageAct2.s
             ).send({from: accountInfo.account});
+            displayAlert('Mint Successful', "success")
         }
         catch(error){
             setAlert({active: true, content: error.message, variant: "danger"})
         }
         accountInfo.updateAccountInfo({hasMintedFreeAct2Token: await accountInfo.Act2MintInstance._biddersHasMinted(this.context.account).call()});
+        accountInfo.updateAccountInfo({userFeedback: null})
     }
 
     function renderUserInterface(){
@@ -147,7 +158,7 @@ function Act1() {
             return <div className="text-left"> No wallet detected</div>
         }else{
             if(accountInfo.account){
-                if(accountInfo.act2Opened){
+                if(accountInfo.act2Opened && weAreLive){
                     if(accountInfo.signedMessageAct2 && !accountInfo.hasMintedFreeAct2Token){
                         return (
                             <Row>
@@ -174,11 +185,25 @@ function Act1() {
                         )
                     }
                 }else{
-                    return <div className="text-left"><b>Drop Closed</b></div>
+                    return <div>Drop Closed</div>
                 }
             }else{
                 return <div>Please connect your wallet</div>
             }
+        }
+    }
+
+    function renderTimer(){
+        let time = '06 Oct 2022 10:00:00 PST'
+        if(Date.parse(time) - Date.now() < 0){
+            return null
+        }else{
+            return(
+                <React.Fragment>
+                    <div className='xs-center text-left'>Time remaining</div>
+                    <span className='xs-center  text-left mb-2'><b><Timer time={time}/></b></span>
+                </React.Fragment>
+            )
         }
     }
 
@@ -191,7 +216,7 @@ function Act1() {
             <Row id="description_row">
                 <Col xs={12} lg={6} className='mb-5'>
                     <img
-                     src={one}
+                     src={visual}
                      alt='visual'
                      className="visual">
 
@@ -204,6 +229,9 @@ function Act1() {
                                 <span className="xs-center text-left"><b>Maximum 30 pieces per wallet, 10  per transaction</b></span>
                                 <span className="xs-center text-left"><b>One free piece for each bidder of Anastasis: the Auction</b></span>
                                 <span className="xs-center text-left"><b>Buy in Ash or Eth, discount for holders of FOMOverse and 25 Ash</b></span>
+                        </Row>
+                        <Row>
+                            {renderTimer()}
                         </Row>
                         <Row>
                             <span className="xs-center text-left mb-2">

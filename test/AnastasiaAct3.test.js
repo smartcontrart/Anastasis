@@ -1,6 +1,7 @@
 const AnastatsisAct2_contract = artifacts.require("Anastasis_Act2");
 const AnastatsisAct3_contract = artifacts.require("Anastasis_Act3");
 const AnastatsisAct3Mint_contract = artifacts.require("AnastasisLimitedEdition");
+const AnastatsisAct3CreatorMint_contract = artifacts.require("AnastasisCreatorMint");
 const FunSplit_contract = artifacts.require("FundSplit")
 const Ash_contract = artifacts.require("fakeASH");
 const FOMOverse_contract = artifacts.require("fakeFOMOverse");
@@ -21,7 +22,7 @@ contract("AnastasisAct3", accounts => {
   let ashOEHolder= accounts[2];
   let selectedByArtist= accounts[3];
   let publicMinter= accounts[4];
-  let maxSupply = 14*33;
+  let maxSupply = 8*33;
 
   beforeEach(async() =>{
     Ash = await Ash_contract.deployed();
@@ -30,6 +31,7 @@ contract("AnastasisAct3", accounts => {
     AnastasisAct2 = await AnastatsisAct2_contract.deployed();
     AnastasisAct3 = await AnastatsisAct3_contract.deployed();
     AnastasisAct3Mint = await AnastatsisAct3Mint_contract.deployed();
+    AnastasisAct3CreatorMint = await AnastatsisAct3CreatorMint_contract.deployed();
     await web3.eth.accounts.wallet.create(1)
     signer = web3.eth.accounts.wallet[0]
 
@@ -40,6 +42,7 @@ contract("AnastasisAct3", accounts => {
     AnastasisAct2Address = await AnastasisAct2.address
     AnastasisAct3Address = await AnastasisAct3.address
     AnastasisAct3MintAddress = await AnastasisAct3Mint.address
+    AnastasisAct3CreatorMint = await AnastasisAct3CreatorMint.address
     FundSplitAddress = await FundSplit.address
     editionNumber = await AnastasisAct3._editionNumber.call();
   });
@@ -160,7 +163,7 @@ contract("AnastasisAct3", accounts => {
     let results = []
     for(let i=1; i<=maxSupply; i++){
       let result = await AnastasisAct3.tokenURI(i);
-      console.log(`iteration ${i}: returned: ${result}`)
+      // console.log(`iteration ${i}: returned: ${result}`)
       results.push(result);
     }
 

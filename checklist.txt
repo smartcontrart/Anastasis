@@ -27,7 +27,7 @@
 // 7) Check FOMOverse address in AnastasisAct2Mint
 // 8) Check Ash address in AnastasisAct2Mint
 // 9) Set Signer in AnastasisAct2Mint
-// 9) Open the drop
+// 10) Open the drop
 
 
 // Anastasis Act 3
@@ -40,7 +40,8 @@
 // 7) Set Fomoverse address
 // 8) Set Ash address
 // 9) Set Anastasis act 2 address
-// 10) Open the drop for Fomo holders
-// 11) Open the drop for ash holders
-// 12) Open the drop for AL list
-// 13) Open the drop to the public
+// 10) Set Signer
+// 11) Open the drop for Fomo holders
+// 12) Open the drop for ash holders
+// 13) Open the drop for AL list
+// 14) Open the drop to the public

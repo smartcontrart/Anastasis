@@ -97,7 +97,10 @@ html, body{
 }
 
 .visual{
-  height: 30vw;
+  /* height: 30vw; s */
+  max-height: 500px;
+  max-width: 500px;
+  /* max-width: 20vw; */
 }
 
 .text-left{
@@ -210,8 +213,19 @@ li::before{
   color: white;
 }
 
+.card_body{
+  max-width: 400px !important;
+  /* justify-content: stretch;
+  align-items: stretch;
+  align-content: stretch; */
+}
+
 .larger-text{
   font-size: 1.2rem !important;
+}
+
+.card_image{
+ 
 }
 @media screen and (max-width: 650px) {
 
@@ -242,13 +256,17 @@ li::before{
   }
 
   .visual{
-    height: 50vw;
+    /* width: 10% !important;  */
+    /* max-width: 100% !important; */
+    /* height: 50vw; */
   }
 } 
 
 @media only screen and (max-width: 1200px) {
   .visual{
-    height:45vw;
+    height: 30vw;
+    /* max-width: 100% !important; */
+    /* height:45vw; */
   }
 }
 
@@ -258,6 +276,10 @@ li::before{
     justify-content: center !important;
     text-align: center !important;
   }
+
+  /* .xs-button-center{
+    justify-content: center !important;
+  } */
   .visual{
     height: 50vw;
   }
@@ -270,5 +292,8 @@ li::before{
 }
 
 @media only screen and (max-width: 600px) {
+  .visual{
+    height: 50vw;
+  }
 
 }

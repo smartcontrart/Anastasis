@@ -7,9 +7,9 @@ contract("FundSplit", accounts => {
 
   var BN = web3.utils.BN;
   let FundSplitAddress;
-  let ashDeposit = new BigNumber(10000*10**18).toFixed();
-  let ashMint = new BigNumber(30000*10**18).toFixed();
-  let ethDeposit = new BigNumber(10*10**18).toFixed();
+  let ashDeposit = new BigNumber(10000*10**18);
+  let ashMint = new BigNumber(30000*10**18);
+  let ethDeposit = new BigNumber(10*10**18);
   let beneficiairies = [
     accounts[2],
     accounts[3],
@@ -54,10 +54,10 @@ contract("FundSplit", accounts => {
     await assert.rejects(AnastasisAct2Mint.setAshAddress(await Ash.address, {from: accounts[1]}) ,"Could not setup contract address");
     assert(await AnastasisAct2Mint.setAshAddress(await Ash.address) ,"Could not setup contract address");
     for(let i=0; i <= 1; i++){
-      await Ash.mint(ashMint, {from: accounts[i]});
+      await Ash.mint(ashMint.toFixed(), {from: accounts[i]});
     }
     let balance = new BigNumber(await Ash.balanceOf(accounts[0])).toFixed();
-    assert(balance == ashMint, "Account[0] did not mint ash");
+    assert(balance == ashMint.toFixed(), "Account[0] did not mint ash");
   })
 
 
@@ -68,32 +68,32 @@ contract("FundSplit", accounts => {
 
   it("... should recieve ASH and track the balance", async ()=>{
     assert(await FundSplit.setAshAddress(AshAddress))
-    assert(await Ash.transfer(FundSplitAddress, ashDeposit, {from: accounts[0]}),"Could not send Ash to the fund contract")
+    assert(await Ash.transfer(FundSplitAddress, ashDeposit.toFixed(), {from: accounts[0]}),"Could not send Ash to the fund contract")
     let fundAshBalance = new BigNumber(await FundSplit.getAshBalance()).toFixed()
-    assert.equal(fundAshBalance, ashDeposit)
+    assert.equal(fundAshBalance, ashDeposit.toFixed())
   })
 
-  it("... should allow to withdraw all Ash", async ()=>{
+  it("... should allow to withdraw half of the Ash", async ()=>{
     let balance0Init = new BigNumber(await Ash.balanceOf(accounts[0])).toFixed()
-    let balanceInit = new BigNumber(await Ash.balanceOf(FundSplitAddress)).toFixed()
-    assert(await FundSplit.withdrawAllAsh(accounts[0]),"Could not withdraw ETH");
+    let balanceInit = new BigNumber(await Ash.balanceOf(FundSplitAddress))
+    assert(await FundSplit.withdrawAsh(accounts[0], ashDeposit.dividedBy(2).toFixed()),"Could not withdraw Ash");
     let balance0After = new BigNumber(await Ash.balanceOf(accounts[0])).toFixed()
     let balanceAfter = new BigNumber(await Ash.balanceOf(FundSplitAddress)).toFixed()
-    assert.equal(balance0After,new BigNumber.sum(balance0Init, ashDeposit).toFixed(), "Funds were not deposited to the right account");
-    assert.equal(balanceInit, new BigNumber.sum(balanceAfter, ashDeposit).toFixed(), "Funds were not deposited to the right account");
+    assert.equal(balance0After,new BigNumber.sum(balance0Init, ashDeposit.dividedBy(2)).toFixed(), "Funds were not deposited to the right account");
+    assert.equal(balanceAfter, balanceInit.minus(ashDeposit.dividedBy(2)).toFixed(), "Funds were not withdrawn correctly");
   })
 
 
   it("... should recieve ETH and track the balance", async ()=>{
-    assert(await web3.eth.sendTransaction({from: accounts[0], to: FundSplitAddress, value: ethDeposit }));
+    assert(await web3.eth.sendTransaction({from: accounts[0], to: FundSplitAddress, value: ethDeposit.toFixed() }));
     let balance = new BigNumber(await web3.eth.getBalance(FundSplitAddress)).toFixed()
-    assert.equal(balance, ethDeposit)
+    assert.equal(balance, ethDeposit.toFixed())
   })
 
-  it("... should allow to withdraw all ETH", async ()=>{
+  it("... should allow to withdraw half of the ETH", async ()=>{
     let balance0Init = new BigNumber(await web3.eth.getBalance(accounts[0])).toFixed()
-    let balanceInit = new BigNumber(await web3.eth.getBalance(FundSplitAddress)).toFixed()
-    let receipt = await FundSplit.withdrawAllEth(accounts[0])
+    let balanceInit = new BigNumber(await web3.eth.getBalance(FundSplitAddress)).dividedBy(2).toFixed()
+    let receipt = await FundSplit.withdrawEth(accounts[0], balanceInit)
 
     // Get gas used
     let gasUsed = new BigNumber(receipt.receipt.gasUsed);
@@ -104,8 +104,8 @@ contract("FundSplit", accounts => {
     // assert(await FundSplit.withdrawAllEth(accounts[0]),"Could not withdraw ETH");
     let totalEthUsed = gasPrice.multipliedBy(gasUsed)
     let balance0After = new BigNumber(await web3.eth.getBalance(accounts[0])).toFixed()
-    let expectedBalance = BigNumber.sum(totalEthUsed, balance0Init, ethDeposit)
-    let balanceAfter = new BigNumber(await web3.eth.getBalance(FundSplitAddress)).toFixed()
+    let expectedBalance = BigNumber.sum(totalEthUsed, balance0Init, ethDeposit.dividedBy(2).toFixed())
+    let balanceAfter = new BigNumber(await web3.eth.getBalance(FundSplitAddress)).dividedBy(2).toFixed()
     assert.equal(balance0After, expectedBalance.toFixed(), "Funds were not deposited to the right account");
     assert.equal(balanceInit, new BigNumber.sum(balanceAfter, ethDeposit).toFixed(), "Funds were not deposited to the right account");
   })
@@ -116,7 +116,7 @@ contract("FundSplit", accounts => {
   })
 
   it("... should allow to split all the Ash", async ()=>{
-    assert(await Ash.transfer(FundSplitAddress, ashDeposit, {from: accounts[0]}),"Could not send Ash to the fund contract")
+    assert(await Ash.transfer(FundSplitAddress, ashDeposit.toFixed(), {from: accounts[0]}),"Could not send Ash to the fund contract")
     let fundsToSplit = new BigNumber(await FundSplit.getAshBalance());
     let balancesBefore=[];
     for(let i =0; i< beneficiairies.length; i++){
@@ -133,7 +133,7 @@ contract("FundSplit", accounts => {
   })
 
   it("... should allow to split all the Eth", async ()=>{
-    assert(await web3.eth.sendTransaction({from: accounts[0], to: FundSplitAddress, value: ethDeposit }));
+    assert(await web3.eth.sendTransaction({from: accounts[0], to: FundSplitAddress, value: ethDeposit.toFixed() }));
     let fundsToSplit = new BigNumber(await web3.eth.getBalance(FundSplitAddress));
     let balancesBefore=[];
     for(let i =0; i< beneficiairies.length; i++){
@@ -152,7 +152,7 @@ contract("FundSplit", accounts => {
 
 
   it("... should allow to split some Ash", async ()=>{
-    assert(await Ash.transfer(FundSplitAddress, ashDeposit, {from: accounts[0]}),"Could not send Ash to the fund contract")
+    assert(await Ash.transfer(FundSplitAddress, ashDeposit.toFixed(), {from: accounts[0]}),"Could not send Ash to the fund contract")
     let amountToWithdraw = BigNumber(ashDeposit).dividedBy(2);
     let balancesBefore=[];
     for(let i =0; i< beneficiairies.length; i++){

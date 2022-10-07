@@ -159,11 +159,14 @@ contract("AnastasisAct2", accounts => {
   })
 
   it("... should have different odds of getting each piece", async ()=>{
+    for(i=10; i<=120; i++){
+      assert(await AnastasisAct2Mint.mint(true, 10, {from: accounts[i], value: publicPrice * 10}));
+    }
 
     let results = []
-    for(let i=0; i<=45; i++){
+    for(let i=0; i<=1000; i++){
       let result = await AnastasisAct2._tokenURIs.call(i+1);
-      console.log(`iteration ${i+1}: returned: ${result}`)
+      // console.log(`iteration ${i+1}: returned: ${result}`)
       results.push(result);
     }
 

@@ -57,7 +57,7 @@ contract Anastasis_Act1 is ERC721, AdminControl {
 
     function tokenURI(uint256 tokenId) public view virtual override returns (string memory) {
         require(_exists(tokenId), "ERC721Metadata: URI query for nonexistent token");
-        uint256 uri = block.number/2400 % _urisNumber;
+        uint256 uri = (block.number/2400) % _urisNumber;
         return string(abi.encodePacked(_uri, Strings.toString(uri), ".json"));
     }
 

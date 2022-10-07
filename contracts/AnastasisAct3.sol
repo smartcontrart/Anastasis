@@ -22,7 +22,7 @@ contract Anastasis_Act3 is ERC721, AdminControl {
     mapping(uint256 => uint256) public _tokenURIs;
     
     constructor () ERC721("f-1 Anastasis - Act3", "f-1 AA3") {
-        _availableURIs = [1,2,3,4,5,6,7,8,9,10,11,12,13,14];
+        _availableURIs = [1,2,3,4,5,6,7,8];
         _saURI = _availableURIs.length;
         for(uint256 i = 1; i <= _availableURIs.length; i++){
             _stock[i] = _editionNumber;
