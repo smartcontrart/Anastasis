@@ -65,6 +65,44 @@ function Act3() {
         accountInfo.updateAccountInfo({userFeedback: null})
     }
 
+    async function handleAshPublicMint(){
+        let allowance = accountInfo.fundSplitAllowance
+        console.log(price)
+        let price = accountInfo.ashPriceAct3
+        console.log(price)
+        if(accountInfo.ashBalance < price){
+            displayAlert('Insufficient Ash Balance', "warning")
+        }else{
+            let ashApprovalFailed = false
+            if(allowance < price){
+                accountInfo.updateAccountInfo({userFeedback: "Approving ASH"})
+                try{
+                    await accountInfo.ashInstance.methods.approve(process.env.REACT_APP_MAINNET_CONTRACT_FUNDSPLIT_ADDRESS, (price).toString()).send({from: accountInfo.account})
+                    accountInfo.updateAccountInfo({contractAllowance: parseInt(await accountInfo.ashInstance.methods.allowance(accountInfo.account, accountInfo.ashAddress).call())})
+                }
+                catch (error){
+                    ashApprovalFailed = true
+                    accountInfo.updateAccountInfo({userFeedback: null})
+                    displayAlert(error.message, "warning")
+                }
+            }
+            if(!ashApprovalFailed){
+                accountInfo.updateAccountInfo({userFeedback: "Minting..."})
+                try{
+                    await accountInfo.Act3AshMintInstance.methods.publicAshMint().send({from: accountInfo.account});
+                    displayAlert('Mint Successful', "success")
+                }
+                catch(error){
+                    console.log(error)
+                    displayAlert(error.message, "danger")
+                }
+            }
+            accountInfo.updateAccountInfo({contractAllowance: parseInt(await accountInfo.ashInstance.methods.allowance(accountInfo.account, accountInfo.ashAddress).call())})
+            accountInfo.updateAccountInfo({userFeedback: null})
+        }
+    }
+
+
     async function handlePrivateMint(){
         let price = accountInfo.price
         accountInfo.updateAccountInfo({userFeedback: "Minting..."})
@@ -102,12 +140,25 @@ function Act3() {
         accountInfo.updateAccountInfo({userFeedback: null})
     }
 
+    function renderEthButton(){
+        if(accountInfo.hasMintedAct3PublicSale){
+            return null
+        }else{
+            return <Button variant='secondary' style={{maxWidth: '150px'}} className='mx-2 mb-2' onClick={()=>handlePublicMint()}>Mint in Eth</Button>
+        }
+    }
 
+    function renderAshButton(){
+        return <Button variant='light' style={{maxWidth: '150px'}} className='mx-2 mb-2' onClick={()=>handleAshPublicMint()}>Mint in Ash</Button>
+    }
+
+    
 
     function renderPublicSaleButton(){
         return(
             <Row className="mb-3 d-flex justify-content-left xs-center">
-                <Button variant='secondary' style={{maxWidth: '150px'}} className='mx-2' onClick={()=>handlePublicMint()}>Mint Public Sale</Button>
+                {renderEthButton()}
+                {renderAshButton()}
             </Row>
         )
     }
@@ -167,7 +218,7 @@ function Act3() {
                     return(
                         <React.Fragment>
                             {renderPrivateSaleInterface()}
-                            {renderPublicSaleInterface()}
+                            {renderPublicSaleButton()}
                         </React.Fragment>
                     )
                 }
@@ -295,7 +346,7 @@ function Act3() {
                             </span>
                             <span className="xs-center text-left mb-3">
                                 <b>
-                                    0.03ETH
+                                    0.03ETH or 40 Ash
                                 </b>
                             </span>
                         </Row>

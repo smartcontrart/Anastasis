@@ -11,6 +11,7 @@ import Act3  from "../contracts/Anastasis_Act3.json";
 import Act1Mint  from "../contracts/AnastasisAuction.json";
 import Act2Mint  from "../contracts/AnastasisOpenEdition.json";
 import Act3Mint  from "../contracts/AnastasisLimitedEdition.json";
+import Act3AshMint  from "../contracts/AnastasisLimitedEditionAsh.json";
 import Act3CreatorMint  from "../contracts/AnastasisCreatorMint.json";
 import ash  from "../contracts/fakeASH.json";
 import fomo  from "../contracts/fakeFOMOverse.json";
@@ -69,6 +70,10 @@ class Connect extends Component {
       Act3Mint.abi,
       parseInt(process.env.REACT_APP_MAINNET_CONTRACT_ACT3MINT_ADDRESS) && process.env.REACT_APP_MAINNET_CONTRACT_ACT3MINT_ADDRESS
     )
+    this.Act3AshMintInstance = new this.web3.eth.Contract(
+      Act3AshMint.abi,
+      parseInt(process.env.REACT_APP_MAINNET_CONTRACT_ACT3ASHMINT_ADDRESS) && process.env.REACT_APP_MAINNET_CONTRACT_ACT3ASHMINT_ADDRESS
+    )
     this.Act3CreatorMintInstance = new this.web3.eth.Contract(
       Act3CreatorMint.abi,
       parseInt(process.env.REACT_APP_MAINNET_CONTRACT_ACT3CREATORMINT_ADDRESS) && process.env.REACT_APP_MAINNET_CONTRACT_ACT3CREATORMINT_ADDRESS
@@ -92,6 +97,7 @@ class Connect extends Component {
     this.context.updateAccountInfo({Act2MintInstance: this.Act2MintInstance})
     this.context.updateAccountInfo({Act3Instance: this.Act3Instance})
     this.context.updateAccountInfo({Act3MintInstance: this.Act3MintInstance})
+    this.context.updateAccountInfo({Act3AshMintInstance: this.Act3AshMintInstance})
     this.context.updateAccountInfo({Act3CreatorMintInstance: this.Act3CreatorMintInstance})
     this.context.updateAccountInfo({ashInstance: this.ashInstance})
     this.context.updateAccountInfo({FOMOVerseInstance: this.FOMOVerseInstance})
@@ -139,11 +145,13 @@ class Connect extends Component {
       this.context.updateAccountInfo({signedMessageAct3Creator: signedMessageAct3Creator})
       this.context.updateAccountInfo({hasMintedAct3PrivateSale: await this.Act3MintInstance.methods._addressMintedInPrivateSale(this.context.account).call()});
       this.context.updateAccountInfo({hasMintedAct3PublicSale: await this.Act3MintInstance.methods._addressMintedInPublicSale(this.context.account).call()});
+      this.context.updateAccountInfo({hasMintedAct3InAsh: await this.Act3AshMintInstance.methods._addressMintedInPublicSale(this.context.account).call()});
       this.context.updateAccountInfo({ashBalance: parseInt(await this.ashInstance.methods.balanceOf(this.context.account).call())})
       this.context.updateAccountInfo({fomoBalance: parseInt(await this.FOMOVerseInstance.methods.balanceOf(this.context.account).call())})
       this.context.updateAccountInfo({act2Balance: parseInt(await this.Act2Instance.methods.balanceOf(this.context.account).call())})
       this.context.updateAccountInfo({fundSplitAllowance: parseInt(await this.ashInstance.methods.allowance(this.context.account, process.env.REACT_APP_MAINNET_CONTRACT_FUNDSPLIT_ADDRESS).call())})
       this.context.updateAccountInfo({creatorHasMinted: await this.Act3CreatorMintInstance.methods._hasMinted(this.context.account).call()})
+      
     }
   }
 
@@ -175,6 +183,7 @@ class Connect extends Component {
       this.context.updateAccountInfo({publicMintOpened: await this.Act3MintInstance.methods._publicMintOpened().call()})
       this.context.updateAccountInfo({creatorMintOpened: await this.Act3CreatorMintInstance.methods._mintOpened().call()})
       this.context.updateAccountInfo({price: parseInt(await this.Act3MintInstance.methods._price().call())})
+      this.context.updateAccountInfo({ashPriceAct3: parseInt(await this.Act3AshMintInstance.methods._price().call())})
 
     }
   }

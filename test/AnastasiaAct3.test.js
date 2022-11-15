@@ -1,6 +1,7 @@
 const AnastatsisAct2_contract = artifacts.require("Anastasis_Act2");
 const AnastatsisAct3_contract = artifacts.require("Anastasis_Act3");
 const AnastatsisAct3Mint_contract = artifacts.require("AnastasisLimitedEdition");
+const AnastatsisAct3MintAsh_contract = artifacts.require("AnastasisLimitedEditionAsh");
 const AnastatsisAct3CreatorMint_contract = artifacts.require("AnastasisCreatorMint");
 const FunSplit_contract = artifacts.require("FundSplit")
 const Ash_contract = artifacts.require("fakeASH");
@@ -22,6 +23,7 @@ contract("AnastasisAct3", accounts => {
   let ashOEHolder= accounts[2];
   let selectedByArtist= accounts[3];
   let publicMinter= accounts[4];
+  let publicAshMinter= accounts[5];
   let maxSupply = 8*33;
 
   beforeEach(async() =>{
@@ -31,6 +33,7 @@ contract("AnastasisAct3", accounts => {
     AnastasisAct2 = await AnastatsisAct2_contract.deployed();
     AnastasisAct3 = await AnastatsisAct3_contract.deployed();
     AnastasisAct3Mint = await AnastatsisAct3Mint_contract.deployed();
+    AnastasisAct3MintAsh = await AnastatsisAct3MintAsh_contract.deployed();
     AnastasisAct3CreatorMint = await AnastatsisAct3CreatorMint_contract.deployed();
     await web3.eth.accounts.wallet.create(1)
     signer = web3.eth.accounts.wallet[0]
@@ -42,6 +45,7 @@ contract("AnastasisAct3", accounts => {
     AnastasisAct2Address = await AnastasisAct2.address
     AnastasisAct3Address = await AnastasisAct3.address
     AnastasisAct3MintAddress = await AnastasisAct3Mint.address
+    AnastasisAct3MintAshAddress = await AnastasisAct3MintAsh.address
     AnastasisAct3CreatorMint = await AnastasisAct3CreatorMint.address
     FundSplitAddress = await FundSplit.address
     editionNumber = await AnastasisAct3._editionNumber.call();
@@ -86,15 +90,21 @@ contract("AnastasisAct3", accounts => {
     await assert.rejects( AnastasisAct3.setURI('test', {from: accounts[1]}), "Admin Could not set the AnastasisAct3Mint as an admin");
     assert(await AnastasisAct3.setURI('blob'), "Admin Could not set the AnastasisAct3Mint as an admin");
     assert(await AnastasisAct3.approveAdmin(AnastasisAct3MintAddress), "Could not set Admin up");
+    assert(await AnastasisAct3.approveAdmin(AnastasisAct3MintAshAddress), "Could not set Admin up");
     assert(await AnastasisAct3Mint.setAnastasisAct3Address(AnastasisAct3Address) ,"Could not setup contract address");
     assert(await AnastasisAct3Mint.setFOMOAddress(FOMOverseAddress) ,"Could not setup contract address");
     assert(await AnastasisAct3Mint.setAshAddress(ashAddress) ,"Could not setup contract address");
     assert(await AnastasisAct3Mint.setAnastasisAct2Address(AnastasisAct2Address) ,"Could not setup contract address");
     assert(await AnastasisAct3Mint.setRecipient(FundSplitAddress) ,"Could not setup contract address");
+    assert(await AnastasisAct3MintAsh.setAshAddress(ashAddress) ,"Could not setup contract address");
+    assert(await AnastasisAct3MintAsh.setRecipient(FundSplitAddress) ,"Could not setup contract address");
+    assert(await AnastasisAct3MintAsh.setAnastasisAct3Address(AnastasisAct3Address) ,"Could not setup contract address");
+    assert(await FundSplit.setAshAddress(ashAddress))
   })
 
   it("... should allow to setup profiles", async ()=>{
     await Ash.mint(amount.toString(),{from: ashOEHolder});
+    await Ash.mint(amount.toString(),{from: publicAshMinter});
     let balance = await Ash.balanceOf(ashOEHolder);
     assert(balance.toString() == amount.toString(), "ashOEHolder did not mint ash");
     
@@ -151,41 +161,51 @@ contract("AnastasisAct3", accounts => {
     await assert.rejects(AnastasisAct3Mint.publicMint({from: publicMinter, value: 0.03*10**18 }));
   })
 
-  it("... should prevent minting more than available supply", async ()=>{
-    for(let i=8; i<=maxSupply; i++){
-      assert(await AnastasisAct3Mint.publicMint({from: accounts[i], value: 0.03*10**18 }),"Public profile couldn't mint");
-    }
-    await assert.rejects(AnastasisAct3Mint.publicMint({from:  accounts[maxSupply + 1], value: 0.03*10**18 }));
+  // it("... should prevent minting more than available supply", async ()=>{
+  //   for(let i=8; i<=maxSupply; i++){
+  //     assert(await AnastasisAct3Mint.publicMint({from: accounts[i], value: 0.03*10**18 }),"Public profile couldn't mint");
+  //   }
+  //   await assert.rejects(AnastasisAct3Mint.publicMint({from:  accounts[maxSupply + 1], value: 0.03*10**18 }));
+  // })
+
+  it("...should allow to mint in Ash", async()=>{
+    assert(await AnastasisAct3MintAsh.togglePublicMintOpened(), "Could not activate public Mint");
+    assert(await Ash.approve(FundSplitAddress, (40*10**18).toString(), {from: publicAshMinter}),"Could not approve ASH");
+    assert(await AnastasisAct3MintAsh.publicAshMint({from: publicAshMinter}), "couldn't mint in Ash");
+    assert(await Ash.approve(FundSplitAddress, (40*10**18).toString(), {from: publicAshMinter}),"Could not approve ASH");
+    await assert.rejects(AnastasisAct3MintAsh.publicAshMint({from: publicAshMinter}));
+    assert(await AnastasisAct3MintAsh.toggleMintLimit(), "Could not activate public Mint");
+    assert(await AnastasisAct3MintAsh.publicAshMint({from: publicAshMinter, value: 40*10**18 }), "couldn't mint in Ash");
   })
 
   
-  it("... should have max 33 tokens of each", async ()=>{
-    let results = []
-    for(let i=1; i<=maxSupply; i++){
-      let result = await AnastasisAct3.tokenURI(i);
-      // console.log(`iteration ${i}: returned: ${result}`)
-      results.push(result);
-    }
+  // it("... should have max 33 tokens of each", async ()=>{
+  //   let results = []
+  //   for(let i=1; i<=maxSupply; i++){
+  //     let result = await AnastasisAct3.tokenURI(i);
+  //     // console.log(`iteration ${i}: returned: ${result}`)
+  //     results.push(result);
+  //   }
 
-    const occurrences = results.reduce(function (acc, curr) {
-      return acc[curr] ? ++acc[curr] : acc[curr] = 1, acc
-    }, {});
-    console.log(occurrences)
-  })
+  //   const occurrences = results.reduce(function (acc, curr) {
+  //     return acc[curr] ? ++acc[curr] : acc[curr] = 1, acc
+  //   }, {});
+  //   console.log(occurrences)
+  // })
 
-  it("... should have max 33 tokens of each", async ()=>{
-    let results = []
-    for(let i=1; i<=maxSupply; i++){
-      let result = await AnastasisAct3._tokenURIs.call(i);
-      console.log(`iteration ${i}: returned: ${result}`)
-      results.push(result);
-    }
+  // it("... should have max 33 tokens of each", async ()=>{
+  //   let results = []
+  //   for(let i=1; i<=maxSupply; i++){
+  //     let result = await AnastasisAct3._tokenURIs.call(i);
+  //     console.log(`iteration ${i}: returned: ${result}`)
+  //     results.push(result);
+  //   }
 
-    const occurrences = results.reduce(function (acc, curr) {
-      return acc[curr] ? ++acc[curr] : acc[curr] = 1, acc
-    }, {});
-    console.log(occurrences)
-  })
+  //   const occurrences = results.reduce(function (acc, curr) {
+  //     return acc[curr] ? ++acc[curr] : acc[curr] = 1, acc
+  //   }, {});
+  //   console.log(occurrences)
+  // })
 
   it("... should be burnable", async ()=>{
     await assert.rejects(AnastasisAct3.burn(1, {from: accounts[3]}), "Could burn someone else's token");

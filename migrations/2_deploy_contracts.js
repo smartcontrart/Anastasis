@@ -4,6 +4,8 @@ var AnastasisAct2 = artifacts.require("Anastasis_Act2");
 var AnastasisAct2Mint = artifacts.require("AnastasisOpenEdition");
 var AnastasisAct3 = artifacts.require("Anastasis_Act3");
 var AnastasisAct3Mint = artifacts.require("AnastasisLimitedEdition");
+var AnastasisAct3CreatorMint = artifacts.require("AnastasisCreatorMint");
+var AnastasisAct3MintAsh = artifacts.require("AnastasisLimitedEditionAsh");
 var FundSplit = artifacts.require("FundSplit");
 var fakeAsh = artifacts.require("fakeASH");
 var fakeFOMOverse = artifacts.require("fakeFOMOverse");
@@ -20,4 +22,6 @@ module.exports = async function(deployer) {
   await deployer.deploy(AnastasisAct2Mint);
   await deployer.deploy(AnastasisAct3);
   await deployer.deploy(AnastasisAct3Mint);
+  await deployer.deploy(AnastasisAct3MintAsh);
+  await deployer.deploy(AnastasisAct3CreatorMint);
 };
